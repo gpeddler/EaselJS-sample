@@ -1,0 +1,8 @@
+{
+	"width": 200,
+	"height": 90,
+	"ignore": {
+		"type": "hitarea",
+		"content": [0, 200, 0, 30]
+	}
+}

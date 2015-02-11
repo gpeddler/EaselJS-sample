@@ -4,22 +4,34 @@
 	<meta charset="utf-8"/>
 	<title>SAMPLE-1</title>
 
-	<link href="./css/base.css" rel="stylesheet" type="text/css"/>
+	<link href="assets/css/base.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
-	<canvas id="screen" width="1280" height="720"></canvas>
+	<canvas id="screen"></canvas>
 
 	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 	<script src="http://code.createjs.com/easeljs-0.8.0.min.js"></script>
-	
-	<script src="./js/game.js"></script>
-	<script src="./js/monster.js"></script>
-	<script src="./js/map.js"></script>
+
+	<!-- GAME OBJECT -->
+	<script src="app/objects/character.js"></script>
+	<script src="app/objects/floor.js"></script>
+	<script src="app/objects/map.js"></script>
+
+	<!-- CUSTOM GAME MAP -->
+	<script src="app/objects/map_custom/map.normal.js"></script>
+
+	<!-- GAME SCENE -->
+	<script src="app/scenes/scene_game.js"></script>
+
+	<!-- GAME MANAGER -->
+	<script src="app/managers/manager_scene.js"></script>
+
+	<script src="app/game.js"></script>
 
 	<script>
 		$( document ).ready(function() {
-		    Game.init();
+		    Game.init(1280, 720);
 		});
 	</script>
 </body>
