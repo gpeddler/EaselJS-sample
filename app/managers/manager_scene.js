@@ -2,9 +2,29 @@ var ManagerScene = function () {
 	var scenes = [];
 	var index = 0;
 
-	var initialize = function(){
+    var stage;
+
+	var initialize = function(istage){
+        stage = istage;
 		clear();
 	};
+
+    var update = function(){
+        var current_scene = getCurrentScene();
+        var objects = current_scene.getObjects();
+
+        $.each(objects, function(i, object){
+            if(stage.getChildIndex(object.data) == -1){
+                stage.addChild(object.data);
+            }
+        });
+
+        current_scene.update();
+    };
+
+    var getCurrentScene = function(){
+        return scenes[index].scene;
+    };
 
 	var clear = function(){
 		scenes = [];
@@ -12,8 +32,8 @@ var ManagerScene = function () {
 	};
 
     return {
-        init: function () {
-        	initialize();
+        init: function (istage) {
+        	initialize(istage);
         },
 
         start: function(key){
@@ -26,12 +46,12 @@ var ManagerScene = function () {
             })
         },
 
-        clear: function(){
-        	clear();
+        update: function(){
+            update();
         },
 
-        getCurrentScene: function(){
-        	return scenes[index].scene;
+        clear: function(){
+        	clear();
         },
 
         addScene: function(name, scene){

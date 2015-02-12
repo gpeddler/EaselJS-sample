@@ -11,7 +11,7 @@ var Game = function () {
 		stage = new createjs.Stage("screen");
 
 		manager_scene = new ManagerScene();
-		manager_scene.init();
+		manager_scene.init(stage);
 		manager_scene.addScene("game", new SceneGame());
 
 		manager_scene.start("game");
@@ -21,15 +21,6 @@ var Game = function () {
 	};
 
 	var render = function(event){
-		var current_scene = manager_scene.getCurrentScene();
-		var objects = current_scene.getObjects();
-
-		$.each(objects, function(i, object){
-			if(stage.getChildIndex(object) == -1){
-				stage.addChild(object);
-			}
-		});
-
 		$("body").keydown(function(e){
 			key[e.keyCode] = 1;
 		});
@@ -38,7 +29,7 @@ var Game = function () {
 			key[e.keyCode] = 0;
 		});
 
-		current_scene.update();
+		manager_scene.update();
 		stage.update();
 	};
 

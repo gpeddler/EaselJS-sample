@@ -12,8 +12,7 @@ var Character = function () {
 	};
 
 	var update = function(){
-		sprite.x = x;
-		sprite.y = y;
+
 	};
 
 	var doAction = function(name){
@@ -24,8 +23,12 @@ var Character = function () {
 	}
 
 	return {
-		x: x,
-		y: y,
+		getPosition: function(){
+			return {
+				x: x,
+				y: y,
+			}
+		},
 
         init: function (ix, iy, isprite) {
     		initialize(ix, iy, isprite);
@@ -50,7 +53,10 @@ var Character = function () {
         },
 
         getObject: function(){
-    		return sprite;
+    		return {
+    			type: 'sprite',
+    			data: sprite
+    		};
         }
     };
 }

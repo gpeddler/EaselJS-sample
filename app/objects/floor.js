@@ -10,17 +10,24 @@ var Floor = function () {
 		x = ix;
 		y = iy;
 
+		if(Math.random() * 100 < 50){
+			direction = -1;
+		}
+
     	$.getJSON(url + "/area.json", function(data){ console.log(data) });
 	};
 
 	var update = function(){
-		image.x = x;
-		image.y = y;
+		
 	};
 
 	return {
-		x: x,
-		y: y,
+		getPosition: function(){
+			return {
+				x: x,
+				y: y
+			};
+		},
 
         init: function (ix, iy, url) {
     		initialize(ix, iy, url);
@@ -31,7 +38,10 @@ var Floor = function () {
         },
 
         getObject: function(){
-    		return image;
+    		return {
+    			type: 'bitmap',
+    			data: image
+    		};
         }
     };
 }
