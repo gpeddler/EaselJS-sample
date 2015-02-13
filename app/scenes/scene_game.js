@@ -20,7 +20,7 @@ var SceneGame = function () {
 		character = new Character();
 		character.init(200, 300, spriteSheet_character);
 
-		map = new MAP_LONG();
+		map = new MAP_DARK();
 		map.addCharacter(character);
 
 		camera = new Camera();

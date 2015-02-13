@@ -1,0 +1,8 @@
+{
+	"width": 1600,
+	"height": 150,
+	"area": {
+		"type": "hitarea",
+		"content": [0, 1600, 48, 30]
+	}
+}

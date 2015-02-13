@@ -85,13 +85,13 @@ var Map = function () {
                 data: background
             });
 
-        	$.each(floors, function(i, floor){
-    			objects.push(floor.getObject());
-        	});
-
         	$.each(characters, function(i, character){
         		objects.push(character.getObject());
         	});
+
+            $.each(floors, function(i, floor){
+                objects.push(floor.getObject());
+            });
 
     		return objects;
         },
