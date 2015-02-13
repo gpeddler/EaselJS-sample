@@ -2,8 +2,6 @@ var SceneGame = function () {
 	var map;
 	var character;
 
-	var gravity = 9.81;
-
 	var initialize = function(){
 		var spriteSheet_character = new createjs.SpriteSheet({
 			"images": ["assets/img/monster.png"],
@@ -28,12 +26,17 @@ var SceneGame = function () {
 	};
 
 	var keyboardControl = function(){
+		
 		if(Game.key[37]){
 			character.action('move_left');
 		}else if(Game.key[39]){
 			character.action('move_right');
 		}else{
 			character.action('stay');
+		}
+
+		if(Game.key[38]){
+			character.action('jump');
 		}
 	};
 

@@ -4,6 +4,8 @@ var Character = function () {
 
 	var x;
 	var y;
+	var speed = 5;
+	var gravity_acc = 0;
 
 	var initialize = function(ix, iy, isprite){
 		sprite = new createjs.Sprite(isprite, "stay");
@@ -12,7 +14,17 @@ var Character = function () {
 	};
 
 	var update = function(){
+		y += parseFloat(gravity_acc);
 
+		sprite.x = x;
+		sprite.y = y;
+	};
+
+	var gravity = function(igravity){
+		if(igravity == 0){
+			gravity_acc = 0;
+		}
+		gravity_acc += parseFloat(igravity);
 	};
 
 	var doAction = function(name){
@@ -20,16 +32,9 @@ var Character = function () {
 			action = name;
 			sprite.gotoAndPlay(name);
 		}
-	}
+	};
 
 	return {
-		getPosition: function(){
-			return {
-				x: x,
-				y: y,
-			}
-		},
-
         init: function (ix, iy, isprite) {
     		initialize(ix, iy, isprite);
         },
@@ -42,15 +47,41 @@ var Character = function () {
     		if(name === "stay"){
 				doAction('stay');
     		}else if(name === "move_left"){
-				x -= 3;
+				x -= speed;
 				sprite.scaleX = 1;
 				doAction('run');
     		}else if(name === "move_right"){
-    			x += 3;
+    			x += speed;
 				sprite.scaleX = -1;
 				doAction('run');
+    		}else if(name === "jump"){
+    			if(gravity_acc == 0){
+	    			y -= 10;
+	    			gravity_acc = -15;
+	    		}
     		}
         },
+
+        gravity: function(igravity){
+        	gravity(igravity);
+        },
+
+        getPosition: function(){
+			return {
+				x: x,
+				y: y,
+			}
+		},
+
+		setPosition: function(ix, iy){
+			if (ix != null){
+				x = ix;
+			}
+			
+			if (iy != null){
+				y = iy;
+			}
+		},
 
         getObject: function(){
     		return {

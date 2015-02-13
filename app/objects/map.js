@@ -4,6 +4,8 @@ var Map = function () {
 	var width = 1280;
 	var height = 720;
 
+    var gravity = 0.98;
+
 	var background;
 	var characters = [];
 	var floors = [];
@@ -22,17 +24,27 @@ var Map = function () {
         background.y = y;
 
 		$.each(floors, function(i, floor){
-            floor.getObject().data.x = floor.getPosition().x + x;
-            floor.getObject().data.y = floor.getPosition().y + y;
-
 			floor.update();
+            floor.getObject().data.x += x;
+            floor.getObject().data.y += y;
 		});
 
 		$.each(characters, function(i, character){
-            character.getObject().data.x = character.getPosition().x + x;
-            character.getObject().data.y = character.getPosition().y + y;
 
+            var gravity_character = gravity;
+
+            $.each(floors, function(i, floor){
+                var hit_position = $_Extension.hitTestByFloor(floor, character.getPosition());
+                if(hit_position != -1){
+                    character.setPosition(null, hit_position + 1);
+                    gravity_character = 0;
+                }
+            });
+
+            character.gravity(gravity_character);
 			character.update();
+            character.getObject().data.x += x;
+            character.getObject().data.y += y;
 		});
 	};
 

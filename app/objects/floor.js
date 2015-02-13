@@ -14,21 +14,17 @@ var Floor = function () {
 			direction = -1;
 		}
 
-    	$.getJSON(url + "/area.json", function(data){ console.log(data) });
+    	$.getJSON(url + "/area.json", function(data){
+    		data_area = data 
+    	});
 	};
 
 	var update = function(){
-		
+		image.x = x;
+		image.y = y;
 	};
 
 	return {
-		getPosition: function(){
-			return {
-				x: x,
-				y: y
-			};
-		},
-
         init: function (ix, iy, url) {
     		initialize(ix, iy, url);
         },
@@ -42,6 +38,17 @@ var Floor = function () {
     			type: 'bitmap',
     			data: image
     		};
-        }
+        },
+
+        getPosition: function(){
+			return {
+				x: x,
+				y: y
+			};
+		},
+
+		getAreaData: function(){
+			return data_area;
+		}
     };
 }

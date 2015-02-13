@@ -1,19 +1,23 @@
 var MAP_NORMAL = function(){
 
 	var floors = [
-		{ x: 100, y: 100, type: 'assets/floor/normal'},
-		{ x: 150, y: 70, type: 'assets/floor/normal'},
-		{ x: 220, y: 400, type: 'assets/floor/normal'},
-		{ x: 520, y: 600, type: 'assets/floor/normal'}
+		{ x: 0, y: 650, type: 'assets/floor/normal'},
+		{ x: 160, y: 650, type: 'assets/floor/normal'},
+		{ x: 320, y: 650, type: 'assets/floor/normal'},
+		{ x: 480, y: 650, type: 'assets/floor/normal'},
+		{ x: 640, y: 650, type: 'assets/floor/normal'},
+		{ x: 800, y: 650, type: 'assets/floor/normal'},
+		{ x: 960, y: 650, type: 'assets/floor/normal'},
+		{ x: 1120, y: 650, type: 'assets/floor/normal'},
+		{ x: 160, y: 580, type: 'assets/floor/normal'},
+		{ x: 400, y: 510, type: 'assets/floor/normal'},
+		{ x: 640, y: 440, type: 'assets/floor/normal'},
+		{ x: 880, y: 370, type: 'assets/floor/normal'}
 	];
 	
 	var create = function(){
 		var map = new Map();
 		map.init(1280, 720);
-
-		var floor = new Floor();
-		floor.init(100, 100, 'assets/floor/normal');
-
 		map.setBackground('assets/img/background.png');
 
 		$.each(floors, function(i, data){
