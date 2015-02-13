@@ -28,7 +28,7 @@ var ManagerScene = function () {
 
 	var clear = function(){
 		scenes = [];
-		scene_index = 0;
+		index = 0;
 	};
 
     return {

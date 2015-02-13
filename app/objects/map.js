@@ -20,8 +20,7 @@ var Map = function () {
 	};
 
 	var update = function(){
-        background.x = x;
-        background.y = y;
+
 
 		$.each(floors, function(i, floor){
 			floor.update();
@@ -49,7 +48,23 @@ var Map = function () {
 	};
 
 	return {
-		getPosition: function(){
+        init: function (iwidth, iheight) {
+    		initialize(iwidth, iheight);
+        },
+
+        update: function(){
+        	update();
+        },
+
+        addCharacter: function(icharacter){
+        	characters.push(icharacter);
+        },
+
+        addFloor: function(ifloor){
+        	floors.push(ifloor);
+        },
+
+        getPosition: function(){
             return {
                 x: x,
                 y: y
@@ -61,26 +76,6 @@ var Map = function () {
                 width: width,
                 height: height
             }
-        },
-
-        init: function (iwidth, iheight) {
-    		initialize(iwidth, iheight);
-        },
-
-        update: function(){
-        	update();
-        },
-
-        setBackground: function(url){
-        	background = new createjs.Bitmap(url);
-        },
-
-        addCharacter: function(icharacter){
-        	characters.push(icharacter);
-        },
-
-        addFloor: function(ifloor){
-        	floors.push(ifloor);
         },
 
         getObjects: function(){
@@ -99,6 +94,22 @@ var Map = function () {
         	});
 
     		return objects;
+        },
+
+        setPosition: function(ix, iy){
+            if(ix != null){
+                x = ix;
+            }
+
+            if(iy != null){
+                y = iy;
+            }
+        },
+
+        setBackground: function(url){
+            background = new createjs.Bitmap(url);
+            background.x = 0;
+            background.y = 0;
         }
     };
 }

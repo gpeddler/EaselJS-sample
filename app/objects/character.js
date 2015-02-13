@@ -17,7 +17,7 @@ var Character = function () {
 		y += parseFloat(gravity_acc);
 
 		sprite.x = x;
-		sprite.y = y;
+		sprite.y = parseInt(y);
 	};
 
 	var gravity = function(igravity){
