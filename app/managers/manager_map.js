@@ -3,7 +3,7 @@ var ManagerMap = function () {
     var portal_sets = [];
 	var index = 0;
 
-    var iii = 0;
+    var delay = 0;
 
 	var initialize = function(){
 		clear();
@@ -11,13 +11,18 @@ var ManagerMap = function () {
 
     var update = function(){
         getCurrentMap().update();
-        iii++;
+
+        if(delay > 0){
+            delay--;
+        }
     };
 
-    var updatePortal = function(character){
+    var updatePortal = function(character){   
+        console.log(character.getPosition());     
         $.each(portal_sets, function(i, portal_set){
             var exist = false;
             var portal = portal_set.getCurrent(getCurrentMapID());
+            portal.update(getCurrentMap().getPosition());
 
             if(portal != null){
                 exist = true;
@@ -35,13 +40,19 @@ var ManagerMap = function () {
     };
 
     var triggerPortal = function(portal_set, character){
-        var connection = portal_set.getConnection(getCurrentMapID()).getData();
+        if(delay == 0){
+            delay = 10;
 
-        getCurrentMap().removeCharacter(character);
-        start(connection.map);
-        getCurrentMap().addCharacter(character);
+            var connection = portal_set.getConnection(getCurrentMapID()).getData();
 
-        character.setPosition(100, 300);
+            getCurrentMap().removeCharacter(character);
+            start(connection.map);
+            getCurrentMap().addCharacter(character);
+            getCurrentMap().update();
+
+            var map_position = getCurrentMap().getPosition();
+            character.setPosition(connection.position.x + map_position.x, connection.position.y + map_position.y);
+        }
     };
 
     var getCurrentMap = function(){
@@ -53,7 +64,6 @@ var ManagerMap = function () {
     };
 
     var start = function(key){
-        iii = 0;
         $.each(maps, function(i, object){
             if(object.id === key){
                 index = i;
@@ -77,8 +87,8 @@ var ManagerMap = function () {
         },
 
         update: function(character){
-            updatePortal(character);
             update();
+            updatePortal(character);
         },
 
         clear: function(){
@@ -116,14 +126,11 @@ var ManagerMap = function () {
         getObjects: function(){
             var scene_objects = getCurrentMap().getObjects();
 
-            if(iii == 1){
-                console.log(scene_objects);
-            }
-
             $.each(portal_sets, function(i, portal_set){
                 var portal = portal_set.getCurrent(getCurrentMapID());
                 if(portal != null){
-                    scene_objects.push(portal.getObject());
+                    var object = portal.getObject();
+                    scene_objects.push(object);
                 }
             });
 

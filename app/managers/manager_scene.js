@@ -6,12 +6,15 @@ var ManagerScene = function () {
 
 	var initialize = function(istage){
         stage = istage;
+        stage.autoClear = true;
 		clear();
 	};
 
     var update = function(){
         var current_scene = getCurrentScene();
         var objects = current_scene.getObjects();
+
+        stage.removeAllChildren();
 
         $.each(objects, function(i, object){
             if(stage.getChildIndex(object.data) == -1){

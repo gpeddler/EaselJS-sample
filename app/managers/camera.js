@@ -12,11 +12,13 @@ var Camera = function () {
         map = imap;
 	};
 
-    var update = function(){
+    var update = function(imap){
         var position = {
             x: 0,
             y: 0
         }
+
+        map = imap;
 
         position.x = parseInt(target.getPosition().x - width / 2);
         position.y = parseInt(target.getPosition().y - height / 2);
@@ -38,12 +40,12 @@ var Camera = function () {
     };
 
     return {
-        init: function (itarget, imap) {
-        	initialize(itarget, imap);
+        init: function (itarget) {
+        	initialize(itarget);
         },
 
-        update: function() {
-            update();
+        update: function(imap) {
+            update(imap);
         },
 
         getPosition: function() {

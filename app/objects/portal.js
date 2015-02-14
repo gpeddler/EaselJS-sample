@@ -1,4 +1,7 @@
 var Portal = function () {
+    var x = 0;
+    var y = 0;
+
     var spriteSheet_portal = new createjs.SpriteSheet({
         "images": ["assets/img/portal.png"],
         "frames": {"width": 88, "height": 115, "count": 1, "regX": 44, "regY": 115 },
@@ -13,13 +16,23 @@ var Portal = function () {
         data = idata;
 
         data.sprite = new createjs.Sprite(spriteSheet_portal, "portal");
-        data.sprite.x = data.position.x;
-        data.sprite.y = data.position.y;
+
+        x = data.position.x;
+        y = data.position.y;
 	};
+
+    var update = function(position){
+        data.sprite.x = x + position.x;
+        data.sprite.y = y + position.y;
+    };
 
     return {
         init: function (idata) {
         	initialize(idata);
+        },
+
+        update: function(position){
+            update(position);
         },
 
         getPosition: function(){

@@ -7,6 +7,7 @@ var Map = function () {
     var gravity = 0.98;
 
 	var background;
+    var layers = [];
 	var characters = [];
 	var floors = [];
 
@@ -15,11 +16,16 @@ var Map = function () {
 		height = iheight;
 
         background = null;
+        layers = [];
 		characters = [];
 		floors = [];
 	};
 
 	var update = function(){
+
+        $.each(layers, function(i, layer){
+            layer.getObject().data.x = x * ((layer.getSize().width - 1280) / (width - 1280));
+        });
 
 		$.each(floors, function(i, floor){
 			floor.update();
@@ -32,6 +38,7 @@ var Map = function () {
 
             $.each(floors, function(i, floor){
                 var hit_position = $_Extension.hitTestByFloor(floor, character.getPosition());
+
                 if(hit_position != -1){
                     character.setPosition(null, hit_position + 1);
                     gravity_character = 0;
@@ -40,6 +47,7 @@ var Map = function () {
 
             character.gravity(gravity_character);
 			character.update();
+
             character.getObject().data.x += x;
             character.getObject().data.y += y;
 		});
@@ -56,6 +64,10 @@ var Map = function () {
 
         addCharacter: function(icharacter){
         	characters.push(icharacter);
+        },
+
+        addLayer: function(ilayer){
+            layers.push(ilayer);
         },
 
         removeCharacter: function(icharacter){
@@ -85,6 +97,10 @@ var Map = function () {
         	objects.push({
                 type: 'bitmap',
                 data: background
+            });
+
+            $.each(layers, function(i, layer){
+                objects.push(layer.getObject());
             });
 
         	$.each(characters, function(i, character){

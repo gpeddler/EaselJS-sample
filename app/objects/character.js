@@ -4,7 +4,7 @@ var Character = function () {
 
 	var x;
 	var y;
-	var speed = 5;
+	var speed = 15;
 	var gravity_acc = 0;
 
 	var initialize = function(ix, iy, isprite){

@@ -20,26 +20,26 @@ var SceneGame = function () {
 
 	var initialize = function(){
 		character = new Character();
-		character.init(200, 300, spriteSheet_character);
+		character.init(50, 620, spriteSheet_character);
 
 		manager_map = new ManagerMap();
 		manager_map.init();
-		manager_map.addMap('first', new MAP_NORMAL());
+		manager_map.addMap('first', new MAP_DOT());
 		manager_map.addMap('second', new MAP_LONG());
 
-		manager_map.addCharacter('second', character);
+		manager_map.addCharacter('first', character);
 
 		manager_map.addPortalSet(generatePortalSet(
 			[
-				{ map: 'first', position: { x: 960, y: 370 } },
+				{ map: 'first', position: { x: 1100, y: 620 } },
 				{ map: 'second', position: { x: 80, y: 650 } }
 			]
 		));
 
-		manager_map.start('second');
+		manager_map.start('first');
 
 		camera = new Camera();
-		camera.init(character, manager_map.getCurrentMap());
+		camera.init(character);
 	};
 
 	var update = function(){
@@ -47,19 +47,29 @@ var SceneGame = function () {
 
 		updateCamera();
 		manager_map.update(character);
+
+		var character_x = character.getPosition().x;
+		var map_x = manager_map.getCurrentMap().getPosition().x;
+
+		if(character_x + map_x < 50){
+			character.setPosition(50 - map_x, null);
+		}else if(character_x + map_x > 1230){
+			character.setPosition(1230 - map_x, null);
+		}
 	};
 
 	var updateCamera = function(){
-		camera.update();
+		camera.update(manager_map.getCurrentMap());
 
 		var current_map = manager_map.getCurrentMap();
 		var camera_x = -1 * camera.getPosition().x;
 		var camera_y = -1 * camera.getPosition().y;
 
-		hope_map_x += (camera_x - current_map.getPosition().x) / 6;
-		hope_map_y += (camera_y - current_map.getPosition().y) / 6;
+		// hope_map_x += (camera_x - current_map.getPosition().x) / 6;
+		// hope_map_y += (camera_y - current_map.getPosition().y) / 6;
 
-		current_map.setPosition(hope_map_x, hope_map_y);
+		// current_map.setPosition(hope_map_x, hope_map_y);
+		current_map.setPosition(camera_x, camera_y);
 	};
 
 	var keyboardControl = function(){
@@ -76,6 +86,12 @@ var SceneGame = function () {
 			//attack
 		}else if(Game.key[83]){
 			character.action('jump');
+		}
+
+		if(Game.key[81]){
+			manager_map.start('first');
+		}else if(Game.key[87]){
+			manager_map.start('second');
 		}
 	};
 
