@@ -21,3 +21,35 @@ $_Extension.hitTestByFloor = function(floor, position){
 
     return parseInt(hit_position);
 };
+
+$_Extension.hitTest = function(object, position, type){
+    var area_position = object.getPosition();
+    var area_size = object.getSize();
+
+    var isHit = false;
+    var area = {
+    	x: area_position.x,
+    	y: area_position.y,
+    	w: area_size.width,
+    	h: area_size.height
+    }
+
+    if(type.indexOf("center") != -1){
+    	area.x = parseInt(area_position.x - (area_size.width / 2));
+    }else if(type.indexOf("right") != -1){
+    	area.x = parseInt(area_position.x - area_size.width);
+    }
+
+    if(type.indexOf("middle") != -1){
+    	area.y = parseInt(area_position.y - (area_size.height / 2));
+    }else if(type.indexOf("bottom") != -1){
+    	area.y = parseInt(area_position.y - area_size.height);
+    }
+
+	if(area.x < position.x && area.x + area.w > position.x
+		&& area.y < position.y && area.y + area.h > position.y){
+		isHit = true;
+	}
+
+    return isHit;
+};

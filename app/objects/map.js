@@ -21,7 +21,6 @@ var Map = function () {
 
 	var update = function(){
 
-
 		$.each(floors, function(i, floor){
 			floor.update();
             floor.getObject().data.x += x;
@@ -29,7 +28,6 @@ var Map = function () {
 		});
 
 		$.each(characters, function(i, character){
-
             var gravity_character = gravity;
 
             $.each(floors, function(i, floor){
@@ -58,6 +56,10 @@ var Map = function () {
 
         addCharacter: function(icharacter){
         	characters.push(icharacter);
+        },
+
+        removeCharacter: function(icharacter){
+            characters.splice($.inArray(icharacter, characters),1);
         },
 
         addFloor: function(ifloor){
