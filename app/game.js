@@ -7,14 +7,16 @@ var Game = function () {
 	var key = [];
 	var manager_scene;
 
-	var initialize = function(){
+	var initialize = function(){			
+		console.log('Game initialize');
+
 		stage = new createjs.Stage("screen");
 
 		manager_scene = new ManagerScene();
 		manager_scene.init(stage);
-		manager_scene.addScene("game", new SceneGame());
+		manager_scene.addScene("login", new SceneLogin());
 
-		manager_scene.start("game");
+		manager_scene.start("login");
 
 		createjs.Ticker.setFPS(30);
 		createjs.Ticker.addEventListener("tick", render);
