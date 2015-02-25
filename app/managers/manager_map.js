@@ -18,7 +18,6 @@ var ManagerMap = function () {
     };
 
     var updatePortal = function(character){   
-        console.log(character.getPosition());     
         $.each(portal_sets, function(i, portal_set){
             var exist = false;
             var portal = portal_set.getCurrent(getCurrentMapID());

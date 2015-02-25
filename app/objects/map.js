@@ -48,8 +48,10 @@ var Map = function () {
             character.gravity(gravity_character);
 			character.update();
 
-            character.getObject().data.x += x;
-            character.getObject().data.y += y;
+            $.each(character.getObjects(), function(i, object){
+                object.data.x += x;
+                object.data.y += y;
+            });
 		});
 	};
 
@@ -104,7 +106,7 @@ var Map = function () {
             });
 
         	$.each(characters, function(i, character){
-        		objects.push(character.getObject());
+        		$.merge(objects, character.getObjects());
         	});
 
             $.each(floors, function(i, floor){

@@ -10,3 +10,44 @@ canvas{
 	margin: 0 auto;
 	border: 1px solid #cacaca;
 }
+
+#doms{
+	position: absolute;
+	left: 0;
+	top: 0;
+
+	width: 1280px;
+	height: 720px;
+}
+
+#input_user{
+	padding: 6px;
+
+	color: #ffffff;
+	font-size: 13px;
+
+	border: none;
+	border-top: 1px solid rgba(255, 255, 255, 0.3);
+	
+	background-color: rgba(0, 0, 0, 0.7);
+
+	box-sizing: border-box;
+}
+
+#input_user:focus{
+	outline-width: 0;
+}
+
+#area_chat{
+	padding: 3px;
+	overflow: scroll;
+
+	color: #ffffff;
+	font-size: 13px;
+
+	border: none;
+
+	background-color: rgba(0, 0, 0, 0.7);
+
+	box-sizing: border-box;
+}
