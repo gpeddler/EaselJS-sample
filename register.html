@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title> 회원 가입 </title>
+
+	<link href="assets/css/base.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script src="http://code.createjs.com/easeljs-0.8.0.min.js"></script>
+	<script src="app/extension.js"></script>
+	<div id="wrapper">
+		<div id="register">
+			<h1> 가입하기 </h1> 
+				<input type="text" id="usr_id" required="required" placeholder="ID"/>
+				<input type="text" id="usr_pwd" required="required" placeholder="Password"/>
+				<input type="text" id="usr_email" required="required" placeholder="Email Address"/>
+				<input type="text" id="usr_nickname" required="required" placeholder="Nickname"/>		
+				<input type="submit" id="btn_join" value="가입하기"/>
+	</div>
+	<script>
+	     $('#btn_join').click(function(e){
+             join();
+        });
+	   	function join(){
+			$.post("http://192.168.0.17:3000/users",	
+			{
+				id: usr_id.value,
+				pwd: usr_pwd.value,
+				email: usr_email.value,
+				nickname: usr_nickname.value
+			},
+			function(data, status){
+				console.log(" Data: " + data.msg + "\n Result: " + data.result);
+				//location.replace('index.html');
+			});
+		};	
+	</script>
+</body>
+</html>

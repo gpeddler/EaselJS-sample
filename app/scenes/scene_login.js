@@ -20,7 +20,7 @@ var SceneLogin = function () {
                 .css('top', '160px')
                 .css('width', '45px');
 
-    var btn_join = $("<input type = 'submit' id = 'usr_join' value= 'Join' onClick='join()'>");
+    var btn_join = $("<input type = 'submit' id = 'usr_join' value= 'Join'>");
         btn_join.css('position', 'absolute')
                 .css('backgroundColor', '#ffec8b')
                 .css('left', '150px')
@@ -56,8 +56,12 @@ var SceneLogin = function () {
         console.log('Password : ' + usr_pwd.value);
         var id  = usr_id.value;
         var pwd = usr_pwd.value;
-        
-        $.post("http://growingdever.cafe24.com:3000/users/login",
+
+        var data = { "id"  : id,
+                     "pwd" : pwd 
+                   };
+
+        $.post("http://192.168.0.17:3000/users/login",
         {
             id: id,
             pwd: pwd
@@ -65,15 +69,12 @@ var SceneLogin = function () {
         function(data, status){
             console.log("Data: " + data + "\nStatus: " + status);
         });
-            
-    };
+
+     };
 
     var join = function(){
         console.log('join');
-        console.log('Userid : ' + usr_id.value);
-        console.log('Password : ' + usr_pwd.value);
-        var id  = usr_id.value;
-        var pwd = usr_pwd.value;
+        location.replace('register.html');
     };
 
     return {
@@ -100,22 +101,3 @@ var SceneLogin = function () {
         }
     };
 };
-
-/*
-    var input_id    = document.createElement('input');
-        input_id.id = 'usr_id';
-        input_id.placeholder = ' Username';
-        input_id.style.position = 'absolute';
-        input_id.style.backgroundColor = '#d3ffce';
-        input_id.style.top  = '100px';
-        input_id.style.left = '100px';
-
-    var input_pwd    = document.createElement('input');
-        input_pwd.id = 'usr_pwd';
-        input_pwd.placeholder = ' Password';
-        input_pwd.style.position = 'absolute';
-        input_pwd.style.backgroundColor = '#d3ffce';
-        input_pwd.style.top  = '100px';
-        input_pwd.style.left = '100px';
-
-*/
