@@ -13,7 +13,7 @@ var Game = function () {
 	var initialize = function(){
 		stage = new createjs.Stage("screen");
 
-		socket = io.connect('http://growingdever.cafe24.com:3000');
+		socket = io.connect('http://192.168.0.17:3000');
 
 		socket.on('connect', function() {
 			var id = Math.random() * 20000;

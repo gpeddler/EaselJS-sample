@@ -40,8 +40,13 @@ var SceneTown = function () {
 		chat.init();
 
 		socket = Game.getSocket();
+
 		socket.on('updatechat', function(username, data){
 			chat.appendArea(username, data);
+		});
+
+		socket.on('updategame', function(data){
+			console.log(data);
 		});
 	};
 
@@ -54,6 +59,8 @@ var SceneTown = function () {
 
 		var character_x = character.getPosition().x;
 		var map_x = manager_map.getCurrentMap().getPosition().x;
+
+		socket.emit('syncgame', character.getPosition());
 
 		if(character_x + map_x < 50){
 			character.setPosition(50 - map_x, null);
