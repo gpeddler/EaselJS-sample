@@ -1,4 +1,7 @@
 var SceneTown = function () {
+	var STATUS = "empty";
+    var NEXT = null;
+
 	var manager_map;
 	var character;
 	var camera;
@@ -22,6 +25,8 @@ var SceneTown = function () {
 	var hope_map_y = 0;
 
 	var initialize = function(){
+		STATUS = "running";
+		
 		character = new Character();
 		character.init(50, 620, spriteSheet_character);
 
@@ -113,6 +118,10 @@ var SceneTown = function () {
 		}
 	};
 
+	var finish = function(){
+        STATUS = 'finish';
+    };
+
     return {
         init: function () {
         	initialize();
@@ -120,6 +129,18 @@ var SceneTown = function () {
 
         update: function(){
         	update();
+        },
+
+        setNext: function(inext){
+            NEXT = inext;
+        },
+
+        getStatus: function(){
+            return STATUS;
+        },
+
+        getNext: function(){
+            return NEXT;
         },
 
         getObjects: function(){
@@ -132,7 +153,7 @@ var SceneTown = function () {
         },
 
         finish: function(){
-
+            finish();
         }
     };
 };

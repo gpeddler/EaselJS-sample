@@ -1,5 +1,6 @@
 var Game = function () {
 	var stage;
+	var USER_ID = '';
 
 	var width = 0;
 	var height = 0;
@@ -11,22 +12,18 @@ var Game = function () {
 	var socket = null;
 
 	var initialize = function(){		
-		console.log('Game initialize');
-
 		stage = new createjs.Stage("screen");
-
-		socket = io.connect('http://192.168.0.17:3000');
-
-		socket.on('connect', function() {
-			var id = Math.random() * 20000;
-			console.log(id);
-			socket.emit('adduser', id);
-		});
 
 		manager_scene = new ManagerScene();
 		manager_scene.init(stage);
 
-		manager_scene.addScene("login", new SceneLogin());
+		var scene_login = new SceneLogin();
+		var scene_town = new SceneTown();
+
+		scene_login.setNext('town');
+
+		manager_scene.addScene("login", scene_login);
+		manager_scene.addScene("town", scene_town)
 
 		manager_scene.start("login");
 
@@ -69,8 +66,20 @@ var Game = function () {
     		initialize();
         },
 
+        setUserID: function(id){
+        	USER_ID = id;
+        },
+
+        setSocket: function(connect){
+        	socket = connect;
+        },
+
         getSocket: function(){
     		return socket;
+        },
+
+        getUserID: function(){
+        	return USER_ID;
         }
     };
 }();

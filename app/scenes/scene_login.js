@@ -1,4 +1,7 @@
 var SceneLogin = function () {
+    var STATUS = "empty";
+    var NEXT = null;
+
 	var background;
     var submit;
     var input_id = $("<input type = 'text' required='' placeholder = 'UserId' id = 'usr_id'>");
@@ -28,38 +31,32 @@ var SceneLogin = function () {
                 .css('width', '45px');
 
 	var initialize = function(){
-		console.log('loginScene initialize');
+        STATUS = "running";
+
         background = new createjs.Bitmap('assets/img/background.png');
+
         $('body').append(input_id);
         $('body').append(input_pwd);
         $('body').append(btn_login);
         $('body').append(btn_join);
 
         $('#usr_login').click(function(e){
-            console.log('usr_login clicked');
             submit();
         });
 
-       $('#usr_join').click(function(e){
-             console.log('btn_join clicked');
-             join();
+        $('#usr_join').click(function(e){
+            join();
         });
 	};
 
 	var update = function(){
-		
 	};
 
     var submit = function(){
-        console.log('submit');
-        console.log('Userid : ' + usr_id.value);
-        console.log('Password : ' + usr_pwd.value);
+        console.log(NEXT);
+
         var id  = usr_id.value;
         var pwd = usr_pwd.value;
-
-        var data = { "id"  : id,
-                     "pwd" : pwd 
-                   };
 
         $.post("http://192.168.0.17:3000/users/login",
         {
@@ -67,14 +64,41 @@ var SceneLogin = function () {
             pwd: pwd
         },
         function(data, status){
-            console.log("Data: " + data + "\nStatus: " + status);
-        });
+            if(data.result){
 
-     };
+                Game.setSocket(io.connect('http://192.168.0.17:3000'));
+                var socket = Game.getSocket();
+
+                socket.on('connect', function() {
+                    socket.emit('adduser', data.user_id);
+
+                });
+
+                // console.log(data.user_id);
+                // Game.setUserID(data.user_id);
+
+                // var socket = Game.getSocket();
+                // console.log(socket);
+                // socket.on('connect', function() {
+                //     // socket.emit('adduser', data.user_id);
+                //     // finish();
+                // });
+            }
+        });
+    };
 
     var join = function(){
         console.log('join');
         location.replace('register.html');
+    };
+
+    var finish = function(){
+        $('#usr_id').remove();
+        $('#usr_pwd').remove();
+        $('#usr_login').remove();
+        $('#usr_join').remove();
+
+        STATUS = 'finish';
     };
 
     return {
@@ -84,6 +108,10 @@ var SceneLogin = function () {
 
         update: function(){
         	update();
+        },
+
+        setNext: function(inext){
+            NEXT = inext;
         },
 
         getObjects: function(){
@@ -96,8 +124,16 @@ var SceneLogin = function () {
             return objects;
         },
 
-        finish: function(){
+        getStatus: function(){
+            return STATUS;
+        },
 
+        getNext: function(){
+            return NEXT;
+        },
+
+        finish: function(){
+            finish();
         }
     };
 };
