@@ -10,7 +10,9 @@ var Game = function () {
 
 	var socket = null;
 
-	var initialize = function(){
+	var initialize = function(){		
+		console.log('Game initialize');
+
 		stage = new createjs.Stage("screen");
 
 		socket = io.connect('http://192.168.0.17:3000');
@@ -23,9 +25,10 @@ var Game = function () {
 
 		manager_scene = new ManagerScene();
 		manager_scene.init(stage);
-		manager_scene.addScene("town", new SceneTown());
 
-		manager_scene.start("town");
+		manager_scene.addScene("login", new SceneLogin());
+
+		manager_scene.start("login");
 
 		createjs.Ticker.setFPS(30);
 		createjs.Ticker.addEventListener("tick", render);

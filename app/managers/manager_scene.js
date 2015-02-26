@@ -5,6 +5,8 @@ var ManagerScene = function () {
     var stage;
 
 	var initialize = function(istage){
+        console.log('ManagerScene initialize');
+
         stage = istage;
         stage.autoClear = true;
 		clear();
