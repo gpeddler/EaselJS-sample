@@ -5,8 +5,6 @@ var ManagerScene = function () {
     var stage;
 
 	var initialize = function(istage){
-        console.log('ManagerScene initialize');
-
         stage = istage;
         stage.autoClear = true;
 		clear();
@@ -14,21 +12,38 @@ var ManagerScene = function () {
 
     var update = function(){
         var current_scene = getCurrentScene();
-        var objects = current_scene.getObjects();
 
-        stage.removeAllChildren();
-
-        $.each(objects, function(i, object){
-            if(stage.getChildIndex(object.data) == -1){
-                stage.addChild(object.data);
+        if(current_scene.getStatus() === 'finish'){
+            if(current_scene.getNext() != null){
+                start(current_scene.getNext());
             }
-        });
+        }else{
+            var objects = current_scene.getObjects();
 
-        current_scene.update();
+            stage.removeAllChildren();
+
+            $.each(objects, function(i, object){
+                if(stage.getChildIndex(object.data) == -1){
+                    stage.addChild(object.data);
+                }
+            });
+
+            current_scene.update();
+        }
     };
 
     var getCurrentScene = function(){
         return scenes[index].scene;
+    };
+
+    var start = function(key){
+        $.each(scenes, function(i, object){
+            if(object.id === key){
+                index = i;
+                object.scene.init();
+                return;
+            }
+        });
     };
 
 	var clear = function(){
@@ -42,13 +57,7 @@ var ManagerScene = function () {
         },
 
         start: function(key){
-            $.each(scenes, function(i, object){
-                if(object.id === key){
-                    index = i;
-                    object.scene.init();
-                    return;
-                }
-            })
+            start(key);
         },
 
         update: function(){
