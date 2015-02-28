@@ -10,6 +10,8 @@ var Game = function () {
 	var manager_scene;
 
 	var socket = null;
+	// var host = 'http://growingdever.cafe24.com:3000';
+	var host = 'http://192.168.0.53:3000'
 
 	var initialize = function(){		
 		stage = new createjs.Stage("screen");
@@ -56,6 +58,7 @@ var Game = function () {
     	height: height,
     	key: key,
     	key_sec: key_sec,
+    	host: host,
 
         init: function (screen_width, screen_height) {
         	$('#screen').attr({ width: screen_width, height: screen_height });

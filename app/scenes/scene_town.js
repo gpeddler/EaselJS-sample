@@ -11,15 +11,6 @@ var SceneTown = function () {
 
 	var socket;
 
-	var spriteSheet_character = new createjs.SpriteSheet({
-		"images": ["assets/img/monster.png"],
-		"frames": {"regX": 32, "height": 64, "count": 20, "regY": 64, "width": 64},
-		"animations": {
-			"stay": [0, 10, "stay"],
-			"run": [11, 19, "run", 0.5]
-		}
-	});
-
 	// cameara moving
 	var hope_map_x = 0;
 	var hope_map_y = 0;
@@ -28,15 +19,14 @@ var SceneTown = function () {
 		STATUS = "running";
 		
 		character = new Character();
-		character.init(50, 620, spriteSheet_character);
+		character.init(Game.getUserID(), 50, 620);
 
 		manager_map = new ManagerMap();
 		manager_map.init();
-		manager_map.addMap('town_it', new MAP_TOWN());
+		manager_map.addMap('town', new MAP_TOWN());
+		manager_map.addCharacter('town', character);
 
-		manager_map.addCharacter('town_it', character);
-
-		manager_map.start('town_it');
+		manager_map.start('town');
 
 		camera = new Camera();
 		camera.init(character);
@@ -51,27 +41,26 @@ var SceneTown = function () {
 		});
 
 		socket.on('updategame', function(data){
-			console.log(data);
+			data = $.grep(data, function(object) {
+				return object.id != character.getID();
+			});
+
+			manager_map.sync(data);
 		});
 	};
 
 	var update = function(){
 		keyboardControl();
 
-		updateCamera();
 		manager_map.update(character);
 		chat.update();
 
-		var character_x = character.getPosition().x;
-		var map_x = manager_map.getCurrentMap().getPosition().x;
+		updateCharacterControl();
+		updateCamera();
 
-		socket.emit('syncgame', character.getPosition());
-
-		if(character_x + map_x < 50){
-			character.setPosition(50 - map_x, null);
-		}else if(character_x + map_x > 1230){
-			character.setPosition(1230 - map_x, null);
-		}
+		var data_sync = character.getSyncData();
+		data_sync['map'] = manager_map.getCurrentMapID();
+		socket.emit('syncgame', data_sync);
 	};
 
 	var updateCamera = function(){
@@ -85,6 +74,17 @@ var SceneTown = function () {
 		hope_map_y += (camera_y - current_map.getPosition().y) / 6;
 
 		current_map.setPosition(hope_map_x, hope_map_y);
+	};
+
+	var updateCharacterControl = function(){
+		var character_x = character.getPosition().x;
+		var map_x = manager_map.getCurrentMap().getPosition().x;
+
+		if(character_x + map_x < 50){
+			character.setPosition(50 - map_x, null);
+		}else if(character_x + map_x > 1230){
+			character.setPosition(1230 - map_x, null);
+		}
 	};
 
 	var keyboardControl = function(){

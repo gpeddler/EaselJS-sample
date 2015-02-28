@@ -3,15 +3,27 @@ var Character = function () {
 	var bubble_head, bubble_body, bubble_tail, bubble_text;
 	var action = "stay";
 
+	var spriteSheet = new createjs.SpriteSheet({
+		"images": ["assets/img/character.png"],
+		"frames": {"regX": 60, "height": 140, "count": 23, "regY": 140, "width": 120},
+		"animations": {
+			"stay": [0, 11, "stay"],
+			"run": [12, 22, "run", 0.5]
+		}
+	});
+
+	var _id;
+
 	var x;
 	var y;
-	var speed = 15;
+	var speed = 10;
 	var gravity_acc = 0;
 
 	var count_chat = 0;
 
-	var initialize = function(ix, iy, isprite){
-		sprite = new createjs.Sprite(isprite, "stay");
+	var initialize = function(id, ix, iy){
+		_id = id;
+		sprite = new createjs.Sprite(spriteSheet, "stay");
 		
 		bubble_text = new createjs.Text("Text", "13px Arial", "#333333");
 		bubble_text.lineWidth = 160;
@@ -39,7 +51,7 @@ var Character = function () {
 			bubble_tail.visible = true;
 
 			bubble_text.x = x - parseInt(bubble_text.getBounds().width / 2);
-			bubble_text.y = y - 90 - bubble_text.getBounds().height;
+			bubble_text.y = y - 140 - bubble_text.getBounds().height;
 
 			bubble_head.x = x - 89;
 			bubble_head.y = bubble_text.y - 19;
@@ -75,8 +87,8 @@ var Character = function () {
 	};
 
 	return {
-        init: function (ix, iy, isprite) {
-    		initialize(ix, iy, isprite);
+        init: function (id, ix, iy) {
+    		initialize(id, ix, iy);
         },
 
         update: function(){
@@ -115,8 +127,19 @@ var Character = function () {
 	    	}
         },
 
+        sync: function(data){
+        	x = data.x;
+        	y = data.y;
+        	doAction(data.action);
+        	sprite.scaleX = data.xscale;
+        },
+
         gravity: function(igravity){
         	gravity(igravity);
+        },
+
+        getID: function(){
+        	return _id;
         },
 
         getPosition: function(){
@@ -165,6 +188,17 @@ var Character = function () {
     		})
 
     		return objects;
+        },
+
+        getSyncData: function(){
+    		return {
+    			id: _id,
+    			x: x,
+    			y: y,
+    			xscale: sprite.scaleX,
+    			nickname: _id,
+    			action: action
+    		};
         }
     };
 }
