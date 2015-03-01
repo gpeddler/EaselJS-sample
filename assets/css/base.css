@@ -40,7 +40,7 @@ canvas{
 
 #area_chat{
 	padding: 3px;
-	overflow: scroll;
+	overflow-y: scroll;
 
 	color: #ffffff;
 	font-size: 13px;

@@ -1,8 +1,8 @@
 var Chat = function () {
 	var x = 0;
-	var y = 570;
+	var y = 620;
     var width = 600;
-    var height = 150;
+    var height = 100;
 
     var active = false;
 
@@ -33,7 +33,6 @@ var Chat = function () {
     var update = function(){
         dom_input.x = x;
         dom_chat.x = x;
-        
 
         if(active){
             dom_input.visible = true;
@@ -77,6 +76,7 @@ var Chat = function () {
 
         appendArea: function(id, content){
             $('#area_chat').append("<br>" + id +" : " +  content);
+            $('#area_chat').scrollTop($('#area_chat').prop('scrollHeight'));
         },
 
         getText: function(){

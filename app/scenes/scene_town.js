@@ -17,7 +17,7 @@ var SceneTown = function () {
 
 	var initialize = function(){
 		STATUS = "running";
-		
+
 		character = new Character();
 		character.init(Game.getUser(), 50, 620);
 
@@ -33,7 +33,10 @@ var SceneTown = function () {
 
 		chat = new Chat();
 		chat.init();
+		
+	};
 
+	var initializeSocket = function(){
 		socket = Game.getSocket();
 
 		socket.on('updatechat', function(username, data){
@@ -57,7 +60,9 @@ var SceneTown = function () {
 
 		updateCharacterControl();
 		updateCamera();
+	};
 
+	var updateSync = function(){
 		var data_sync = character.getSyncData();
 		data_sync['map'] = manager_map.getCurrentMapID();
 		socket.emit('syncgame', data_sync);
@@ -93,8 +98,6 @@ var SceneTown = function () {
 				character.chat(chat.getText());
 				socket.emit('sendchat', chat.getText());
 
-				$('#area_chat').scrollTop($('#area_chat').prop('scrollHeight'))
-
 				chat.clear();
 			}
 
@@ -125,10 +128,12 @@ var SceneTown = function () {
     return {
         init: function () {
         	initialize();
+        	initializeSocket();
         },
 
         update: function(){
         	update();
+        	updateSync();
         },
 
         setNext: function(inext){

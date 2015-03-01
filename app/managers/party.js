@@ -1,6 +1,4 @@
 var Party = function () {
-    var id = 0;
-
 	var members = []; // members include master
     var master_id = null;
 

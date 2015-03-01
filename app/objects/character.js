@@ -18,7 +18,7 @@ var Character = function () {
 
 	var x;
 	var y;
-	var speed = 10;
+	var speed = 8;
 	var gravity_acc = 0;
 
 	var count_chat = 0;
@@ -104,8 +104,6 @@ var Character = function () {
 	return {
         init: function (config, ix, iy) {
     		initialize(config, ix, iy);
-
-    		console.log(config);
         },
 
         update: function(){
@@ -145,13 +143,21 @@ var Character = function () {
         },
 
         sync: function(data){
-    		console.log(data);
-
         	x = data.x;
         	y = data.y;
         	nickname = data.nickname;
         	doAction(data.action);
         	sprite.scaleX = data.xscale;
+        	gravity_acc = data.gravity;
+        	count_chat = data.count_chat,
+			bubble_text.text = data.count_text;
+        },
+
+        isFalling: function(){
+        	if(gravity_acc >= 0){
+        		return true;
+        	}
+        	return false;
         },
 
         gravity: function(igravity){
@@ -233,7 +239,10 @@ var Character = function () {
     			y: y,
     			xscale: sprite.scaleX,
     			nickname: _nickname,
-    			action: action
+    			action: action,
+    			gravity: gravity_acc,
+    			count_chat: count_chat,
+    			count_text: bubble_text.text
     		};
         }
     };

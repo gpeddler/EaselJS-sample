@@ -22,11 +22,14 @@ var Game = function () {
 
 		var scene_login = new SceneLogin();
 		var scene_town = new SceneTown();
+		var scene_game = new SceneGame();
 
-		scene_login.setNext('town');
+		scene_login.setNext('game');
+		scene_town.setNext('game');
 
 		manager_scene.addScene("login", scene_login);
-		manager_scene.addScene("town", scene_town)
+		manager_scene.addScene("town", scene_town);
+		manager_scene.addScene("game", scene_game);
 
 		manager_scene.start("login");
 
