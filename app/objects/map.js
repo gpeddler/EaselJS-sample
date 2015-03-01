@@ -52,6 +52,11 @@ var Map = function () {
                 object.data.x += x;
                 object.data.y += y;
             });
+
+            $.each(character.getFrontObjects(), function(i, object){
+                object.data.x += x;
+                object.data.y += y;
+            });
 		});
 	};
 
@@ -124,6 +129,10 @@ var Map = function () {
 
             $.each(floors, function(i, floor){
                 objects.push(floor.getObject());
+            });
+
+            $.each(characters, function(i, character){
+                $.merge(objects, character.getFrontObjects());
             });
 
     		return objects;

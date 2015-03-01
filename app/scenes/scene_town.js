@@ -19,7 +19,7 @@ var SceneTown = function () {
 		STATUS = "running";
 		
 		character = new Character();
-		character.init(Game.getUserID(), 50, 620);
+		character.init(Game.getUser(), 50, 620);
 
 		manager_map = new ManagerMap();
 		manager_map.init();

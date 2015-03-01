@@ -1,6 +1,7 @@
 var Character = function () {
 	var sprite;
 	var bubble_head, bubble_body, bubble_tail, bubble_text;
+	var tag_nick, tag_back;
 	var action = "stay";
 
 	var spriteSheet = new createjs.SpriteSheet({
@@ -13,6 +14,7 @@ var Character = function () {
 	});
 
 	var _id;
+	var _nickname;
 
 	var x;
 	var y;
@@ -21,8 +23,9 @@ var Character = function () {
 
 	var count_chat = 0;
 
-	var initialize = function(id, ix, iy){
-		_id = id;
+	var initialize = function(config, ix, iy){
+		_id = config.id;
+		_nickname = config.nickname;
 		sprite = new createjs.Sprite(spriteSheet, "stay");
 		
 		bubble_text = new createjs.Text("Text", "13px Arial", "#333333");
@@ -33,6 +36,13 @@ var Character = function () {
 		bubble_head = new createjs.Bitmap('assets/img/bubble/head.png');
 		bubble_body = new createjs.Bitmap('assets/img/bubble/body.png');
 		bubble_tail = new createjs.Bitmap('assets/img/bubble/tail.png');
+
+		tag_nick = new createjs.Text("Text", "13px Arial", "#FFFFFF");
+		tag_nick.text = _nickname;
+
+		tag_back =  new createjs.Shape();
+ 		tag_back.graphics.beginFill("#000000").drawRect(0, 0, tag_nick.getBounds().width + 10, tag_nick.getBounds().height + 6);
+ 		tag_back.alpha = 0.7;
 
 		x = ix;
 		y = iy;
@@ -70,6 +80,11 @@ var Character = function () {
 			bubble_body.visible = false;
 			bubble_tail.visible = false;
 		}
+
+		tag_nick.x = x - parseInt(tag_nick.getBounds().width / 2);
+		tag_nick.y = y + 5;
+		tag_back.x = tag_nick.x - 5;
+		tag_back.y = tag_nick.y - 3;
 	};
 
 	var gravity = function(igravity){
@@ -87,8 +102,10 @@ var Character = function () {
 	};
 
 	return {
-        init: function (id, ix, iy) {
-    		initialize(id, ix, iy);
+        init: function (config, ix, iy) {
+    		initialize(config, ix, iy);
+
+    		console.log(config);
         },
 
         update: function(){
@@ -116,7 +133,7 @@ var Character = function () {
 
         chat: function(content){
         	if(content !== ''){
-	    		var input = "";
+	    		var input = _nickname + " : ";
 	    		for(var i = 0; i <= parseInt(content.length / 13); i++){
 					input += content.substr(i * 13, 13) + " ";
 				}
@@ -128,8 +145,11 @@ var Character = function () {
         },
 
         sync: function(data){
+    		console.log(data);
+
         	x = data.x;
         	y = data.y;
+        	nickname = data.nickname;
         	doAction(data.action);
         	sprite.scaleX = data.xscale;
         },
@@ -185,7 +205,23 @@ var Character = function () {
     		objects.push({
     			type: 'text',
     			data: bubble_text
-    		})
+    		});
+
+    		return objects;
+        },
+
+        getFrontObjects: function(){
+        	var objects = [];
+
+        	objects.push({
+        		type: 'graphic',
+        		data: tag_back
+        	});
+
+        	objects.push({
+    			type: 'text',
+    			data: tag_nick
+    		});
 
     		return objects;
         },
@@ -196,7 +232,7 @@ var Character = function () {
     			x: x,
     			y: y,
     			xscale: sprite.scaleX,
-    			nickname: _id,
+    			nickname: _nickname,
     			action: action
     		};
         }

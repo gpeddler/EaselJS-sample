@@ -68,15 +68,26 @@ var SceneLogin = function () {
         function(data, status){
             if(data.result){
                 Game.setSocket(io.connect(Game.host));
-                Game.setUserID(data.user_id);
+                Game.setUser(data);
 
                 var socket = Game.getSocket();
                 socket.on('connect', function() {
-                    socket.emit('adduser', data.user_id);
-                    finish();
+                    socket.emit('adduser', data.id);
                 });
+
+                socket.on('result::adduser', resultAddUser);
+            }else{
+                alert('없는 계정입니다 ㅋ');
             }
         });
+    };
+
+    var resultAddUser = function(data){
+        if(data.result){
+            finish();
+        }else{
+            alert(data.msg);
+        }
     };
 
     var join = function(){

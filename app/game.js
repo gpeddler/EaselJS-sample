@@ -1,6 +1,6 @@
 var Game = function () {
 	var stage;
-	var USER_ID = '';
+	var data_user = {};
 
 	var width = 0;
 	var height = 0;
@@ -70,8 +70,8 @@ var Game = function () {
     		initialize();
         },
 
-        setUserID: function(id){
-        	USER_ID = id;
+        setUser: function(config){
+        	data_user = config
         },
 
         setSocket: function(connect){
@@ -82,8 +82,8 @@ var Game = function () {
     		return socket;
         },
 
-        getUserID: function(){
-        	return USER_ID;
+        getUser: function(){
+        	return data_user;
         }
     };
 }();
