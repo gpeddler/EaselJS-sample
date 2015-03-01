@@ -16,6 +16,8 @@ var ManagerScene = function () {
         if(current_scene.getStatus() === 'finish'){
             if(current_scene.getNext() != null){
                 start(current_scene.getNext());
+            }else{
+                location.reload();
             }
         }else{
             var objects = current_scene.getObjects();

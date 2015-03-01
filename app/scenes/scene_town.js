@@ -11,6 +11,8 @@ var SceneTown = function () {
 
 	var socket;
 
+	var ui_btns = [];
+
 	// cameara moving
 	var hope_map_x = 0;
 	var hope_map_y = 0;
@@ -38,7 +40,45 @@ var SceneTown = function () {
 		camera.init(character);
 
 		chat = new Chat();
-		chat.init();		
+		chat.init();
+
+		initializeUI();
+	};
+
+	var initializeUI = function(){
+		var ui_btn_info = new Button();	
+		var action_info = function(){
+			alert('info');
+		};
+		ui_btn_info.init('assets/img/btn_ui_info.png', action_info, {x: 876, y: 617, width: 100, height: 100});
+
+		var ui_btn_project = new Button();	
+		var action_project = function(){
+			alert('project');
+		};
+		ui_btn_project.init('assets/img/btn_ui_project.png', action_project, {x: 976, y: 617, width: 100, height: 100});
+
+		var ui_btn_party = new Button();	
+		var action_party = function(){
+			alert('party');
+		};
+		ui_btn_party.init('assets/img/btn_ui_party.png', action_party, {x: 1076, y: 617, width: 100, height: 100});
+
+		var ui_btn_out = new Button();	
+		var action_out = function(){
+			NEXT = null;
+			finish();
+		};
+		ui_btn_out.init('assets/img/btn_ui_out.png', action_out, {x: 1176, y: 617, width: 100, height: 100});
+
+		ui_btns = [
+			ui_btn_info,
+			ui_btn_project,
+			ui_btn_party,
+			ui_btn_out
+		];
+
+		console.log(ui_btns);
 	};
 
 	var initializeSocket = function(){
@@ -65,6 +105,10 @@ var SceneTown = function () {
 
 		updateCharacterControl();
 		updateCamera();
+
+		$.each(ui_btns, function(i, object){
+    		object.update();
+    	});
 	};
 
 	var updateSync = function(){
@@ -158,6 +202,10 @@ var SceneTown = function () {
 
         	$.merge(objects, manager_map.getObjects());
         	$.merge(objects, chat.getObjects());
+
+        	$.each(ui_btns, function(i, object){
+        		objects.push(object.getObject());
+        	});
 
         	return objects;
         },
