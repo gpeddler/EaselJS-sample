@@ -15,6 +15,7 @@ var Game = function () {
 
 	var initialize = function(){		
 		stage = new createjs.Stage("screen");
+		stage.enableMouseOver(20);  
 
 		manager_scene = new ManagerScene();
 		manager_scene.init(stage);

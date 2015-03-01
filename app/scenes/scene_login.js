@@ -49,6 +49,10 @@ var SceneLogin = function () {
         });
 	};
 
+    var test = function(event){
+        alert('test');
+    };
+
 	var update = function(){
 	};
 
