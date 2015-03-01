@@ -24,7 +24,7 @@ var SceneTown = function () {
 		character.init(Game.getUser(), 50, 620);
 
 		npc_cafe = new Npc();
-		npc_cafe.init('assets/img/npc_cafe.png', 'room', {x: 200, y: 490, width: 148, height: 164});
+		npc_cafe.init('assets/img/npc_cafe.png', 'click2', {x: 200, y: 490, width: 148, height: 164});
 
 		manager_map = new ManagerMap();
 		manager_map.init();
