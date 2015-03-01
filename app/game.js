@@ -10,22 +10,27 @@ var Game = function () {
 	var manager_scene;
 
 	var socket = null;
+	// var host = 'http://growingdever.cafe24.com:3000';
+	var host = 'http://192.168.0.53:3000'
 
 	var initialize = function(){		
 		stage = new createjs.Stage("screen");
+		stage.enableMouseOver(20);  
 
 		manager_scene = new ManagerScene();
 		manager_scene.init(stage);
 
 		var scene_login = new SceneLogin();
 		var scene_town = new SceneTown();
+		var scene_test = new SceneTest();
 
 		scene_login.setNext('town');
 
+		manager_scene.addScene("test", scene_test);
 		manager_scene.addScene("login", scene_login);
 		manager_scene.addScene("town", scene_town)
 
-		manager_scene.start("login");
+		manager_scene.start("test");
 
 		createjs.Ticker.setFPS(30);
 		createjs.Ticker.addEventListener("tick", render);
@@ -56,6 +61,7 @@ var Game = function () {
     	height: height,
     	key: key,
     	key_sec: key_sec,
+    	host: host,
 
         init: function (screen_width, screen_height) {
         	$('#screen').attr({ width: screen_width, height: screen_height });

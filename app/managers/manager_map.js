@@ -1,9 +1,11 @@
 var ManagerMap = function () {
 	var maps = [];
     var portal_sets = [];
-	var index = 0;
 
+	var index = 0;
     var delay = 0;
+
+    var data_sync = [];
 
 	var initialize = function(){
 		clear();
@@ -38,6 +40,68 @@ var ManagerMap = function () {
         });
     };
 
+    var start = function(key){
+        $.each(maps, function(i, object){
+            if(object.id === key){
+                index = i;
+                return;
+            }
+        });
+    };
+
+    var clear = function(){
+        maps = [];
+        index = 0;
+    };
+
+    var syncData = function(data){
+        // add new character
+        $.each(data, function(i, object){
+            var idx = getIndex(data_sync, object.id);
+
+            if(idx === -1){
+                var character = new Character();
+                character.init(object.id, object.x, object.y);
+
+                addCharacter(getCurrentMapID(), character);
+            }
+        });
+
+        // remove exist character
+        $.each(data_sync, function(i, object){
+            var idx = getIndex(data_sync, object.id);
+
+            if(idx === -1){
+                var character = findCharacter(getCurrentMapID(), object.id);
+                getCurrentMap().removeCharacter(character);
+            }
+        });
+
+        data_sync = data;
+
+        function getIndex(objects, id){
+            result = -1;
+
+            $.each(objects, function(i, object){
+                if(object.id === id){
+                    result = i;
+                }
+            });
+
+            return result;
+        }
+    };
+
+    var syncUpdate = function(){
+        $.each(data_sync, function(i, object){
+            var character = findCharacter(getCurrentMapID(), object.id);
+            if(character != null){
+                character.sync(object);
+                character.update();
+            }
+        });
+    };
+
     var triggerPortal = function(portal_set, character){
         if(delay == 0){
             delay = 10;
@@ -54,6 +118,28 @@ var ManagerMap = function () {
         }
     };
 
+    var findCharacter = function(map_name, id){
+        var result = null;
+
+        $.each(maps, function(i, map){
+            if(map.id === map_name){
+                result = map.map.findCharacter(id);
+                return false;
+            }
+        });
+
+        return result;
+    };
+
+    var addCharacter = function(map_name, character){
+        $.each(maps, function(i, object){
+            if(object.id === map_name){
+                object.map.addCharacter(character);
+                return;
+            }
+        });
+    };
+
     var getCurrentMap = function(){
         return maps[index].map;
     };
@@ -61,20 +147,6 @@ var ManagerMap = function () {
     var getCurrentMapID = function(){
         return maps[index].id;
     };
-
-    var start = function(key){
-        $.each(maps, function(i, object){
-            if(object.id === key){
-                index = i;
-                return;
-            }
-        });
-    };
-
-	var clear = function(){
-		maps = [];
-		index = 0;
-	};
 
     return {
         init: function () {
@@ -94,6 +166,15 @@ var ManagerMap = function () {
         	clear();
         },
 
+        sync: function(data){
+            syncData(data);
+            syncUpdate();
+        },
+
+        findCharacter: function(map_name, id){
+            findCharacter(map_name, id);
+        },
+
         addMap: function(name, map){
         	maps.push({
         		id: name,
@@ -102,12 +183,7 @@ var ManagerMap = function () {
         },
 
         addCharacter: function(map_name, character){
-            $.each(maps, function(i, object){
-                if(object.id === map_name){
-                    object.map.addCharacter(character);
-                    return;
-                }
-            });
+            addCharacter(map_name, character);
         },
 
         addPortalSet: function(set){

@@ -49,46 +49,37 @@ var SceneLogin = function () {
         });
 	};
 
+    var test = function(event){
+        alert('test');
+    };
+
 	var update = function(){
 	};
 
     var submit = function(){
-        console.log(NEXT);
-
         var id  = usr_id.value;
         var pwd = usr_pwd.value;
 
-        $.post("http://192.168.0.17:3000/users/login",
+        $.post(Game.host + "/users/login",
         {
             id: id,
             pwd: pwd
         },
         function(data, status){
             if(data.result){
+                Game.setSocket(io.connect(Game.host));
+                Game.setUserID(data.user_id);
 
-                Game.setSocket(io.connect('http://192.168.0.17:3000'));
                 var socket = Game.getSocket();
-
                 socket.on('connect', function() {
                     socket.emit('adduser', data.user_id);
-
+                    finish();
                 });
-
-                // console.log(data.user_id);
-                // Game.setUserID(data.user_id);
-
-                // var socket = Game.getSocket();
-                // console.log(socket);
-                // socket.on('connect', function() {
-                //     // socket.emit('adduser', data.user_id);
-                //     // finish();
-                // });
             }
         });
     };
 
     var join = function(){
-        console.log('join');
         location.replace('register.html');
     };
 

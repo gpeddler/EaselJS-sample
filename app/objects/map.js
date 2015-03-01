@@ -64,6 +64,19 @@ var Map = function () {
         	update();
         },
 
+        findCharacter: function(id){
+            var result = null;
+
+            $.each(characters, function(i, character){
+                if(character.getID() === id){
+                    result = character
+                    return false;
+                }
+            });
+
+            return result;
+        },
+
         addCharacter: function(icharacter){
         	characters.push(icharacter);
         },
@@ -72,12 +85,12 @@ var Map = function () {
             layers.push(ilayer);
         },
 
-        removeCharacter: function(icharacter){
-            characters.splice($.inArray(icharacter, characters),1);
+        addFloor: function(ifloor){
+            floors.push(ifloor);
         },
 
-        addFloor: function(ifloor){
-        	floors.push(ifloor);
+        removeCharacter: function(icharacter){
+            characters.splice($.inArray(icharacter, characters),1);
         },
 
         getPosition: function(){
