@@ -1,53 +1,87 @@
 var SceneGame = function () {
+	var STATUS = "empty";
+	var NEXT = null;
+
 	var manager_map;
 	var character;
 	var camera;
+	var chat;
 
 	var portal_set;
 
-	var spriteSheet_character = new createjs.SpriteSheet({
-		"images": ["assets/img/monster.png"],
-		"frames": {"regX": 32, "height": 64, "count": 20, "regY": 64, "width": 64},
-		"animations": {
-			"stay": [0, 10, "stay"],
-			"run": [11, 19, "run", 0.5]
-		}
-	});
+	var socket;
 
 	// cameara moving
 	var hope_map_x = 0;
 	var hope_map_y = 0;
 
 	var initialize = function(){
+		STATUS = "running";
+
 		character = new Character();
-		character.init(50, 620, spriteSheet_character);
+		character.init(Game.getUser(), 50, 620);
 
 		manager_map = new ManagerMap();
 		manager_map.init();
-		manager_map.addMap('first', new MAP_DOT());
-		manager_map.addMap('second', new MAP_LONG());
+		manager_map.addMap('cafe_1', new MAP_CAFE());
 
-		manager_map.addCharacter('first', character);
-
-		manager_map.addPortalSet(generatePortalSet(
-			[
-				{ map: 'first', position: { x: 1100, y: 620 } },
-				{ map: 'second', position: { x: 80, y: 650 } }
-			]
-		));
+		manager_map.addCharacter('cafe_1', character);
 
 		manager_map.start('first');
 
 		camera = new Camera();
 		camera.init(character);
+
+		chat = new Chat();
+		chat.init();
+	};
+
+	var initializeSocket = function(){
+		socket = Game.getSocket();
+
+		socket.on('updatechat', function(username, data){
+			chat.appendArea(username, data);
+		});
+
+		socket.on('updategame', function(data){
+			data = $.grep(data, function(object) {
+				return object.id != character.getID();
+			});
+
+			manager_map.sync(data);
+		});
 	};
 
 	var update = function(){
-		keyboardControl();
+		keyboardControl();	
 
-		updateCamera();
 		manager_map.update(character);
+		chat.update();
 
+		updateCharacterControl();
+		updateCamera();
+	};
+
+	var updateSync = function(){
+		var data_sync = character.getSyncData();
+		data_sync['map'] = manager_map.getCurrentMapID();
+		socket.emit('syncgame', data_sync);
+	};
+
+	var updateCamera = function(){
+		camera.update(manager_map.getCurrentMap());
+
+		var current_map = manager_map.getCurrentMap();
+		var camera_x = -1 * camera.getPosition().x;
+		var camera_y = -1 * camera.getPosition().y;
+
+		hope_map_x += (camera_x - current_map.getPosition().x) / 6;
+		hope_map_y += (camera_y - current_map.getPosition().y) / 6;
+
+		current_map.setPosition(hope_map_x, hope_map_y);
+	};
+
+	var updateCharacterControl = function(){
 		var character_x = character.getPosition().x;
 		var map_x = manager_map.getCurrentMap().getPosition().x;
 
@@ -58,40 +92,32 @@ var SceneGame = function () {
 		}
 	};
 
-	var updateCamera = function(){
-		camera.update(manager_map.getCurrentMap());
-
-		var current_map = manager_map.getCurrentMap();
-		var camera_x = -1 * camera.getPosition().x;
-		var camera_y = -1 * camera.getPosition().y;
-
-		// hope_map_x += (camera_x - current_map.getPosition().x) / 6;
-		// hope_map_y += (camera_y - current_map.getPosition().y) / 6;
-
-		// current_map.setPosition(hope_map_x, hope_map_y);
-		current_map.setPosition(camera_x, camera_y);
-	};
-
 	var keyboardControl = function(){
+		if(Game.key_sec[13] == 9){
+			if(chat.isActive()){
+				character.chat(chat.getText());
+				socket.emit('sendchat', chat.getText());
+
+				chat.clear();
+			}
+
+			chat.toggleActive();
+		}
 		
-		if(Game.key[37]){
-			character.action('move_left');
-		}else if(Game.key[39]){
-			character.action('move_right');
-		}else{
-			character.action('stay');
-		}
+		if(!chat.isActive()){
+			if(Game.key[37]){
+				character.action('move_left');
+			}else if(Game.key[39]){
+				character.action('move_right');
+			}else{
+				character.action('stay');
+			}
 
-		if(Game.key[65]){
-			//attack
-		}else if(Game.key[83]){
-			character.action('jump');
-		}
-
-		if(Game.key[81]){
-			manager_map.start('first');
-		}else if(Game.key[87]){
-			manager_map.start('second');
+			if(Game.key[65]){
+				//attack
+			}else if(Game.key[83]){
+				character.action('jump');
+			}
 		}
 	};
 
@@ -108,24 +134,44 @@ var SceneGame = function () {
 		return portal_set;
 	};
 
+	var finish = function(){
+        STATUS = 'finish';
+    };
+
     return {
         init: function () {
         	initialize();
+        	initializeSocket();
         },
 
         update: function(){
         	update();
+        	updateSync();
+        },
+
+        setNext: function(inext){
+            NEXT = inext;
+        },
+
+        getStatus: function(){
+            return STATUS;
+        },
+
+        getNext: function(){
+            return NEXT;
         },
 
         getObjects: function(){
         	var objects = [];
+
         	$.merge(objects, manager_map.getObjects());
+        	$.merge(objects, chat.getObjects());
 
         	return objects;
         },
 
         finish: function(){
-
+        	finish();
         }
     };
 };

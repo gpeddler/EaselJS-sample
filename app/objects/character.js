@@ -1,17 +1,32 @@
 var Character = function () {
 	var sprite;
 	var bubble_head, bubble_body, bubble_tail, bubble_text;
+	var tag_nick, tag_back;
 	var action = "stay";
+
+	var spriteSheet = new createjs.SpriteSheet({
+		"images": ["assets/img/character.png"],
+		"frames": {"regX": 60, "height": 140, "count": 23, "regY": 140, "width": 120},
+		"animations": {
+			"stay": [0, 11, "stay"],
+			"run": [12, 22, "run", 0.5]
+		}
+	});
+
+	var _id;
+	var _nickname;
 
 	var x;
 	var y;
-	var speed = 15;
+	var speed = 8;
 	var gravity_acc = 0;
 
 	var count_chat = 0;
 
-	var initialize = function(ix, iy, isprite){
-		sprite = new createjs.Sprite(isprite, "stay");
+	var initialize = function(config, ix, iy){
+		_id = config.id;
+		_nickname = config.nickname;
+		sprite = new createjs.Sprite(spriteSheet, "stay");
 		
 		bubble_text = new createjs.Text("Text", "13px Arial", "#333333");
 		bubble_text.lineWidth = 160;
@@ -21,6 +36,13 @@ var Character = function () {
 		bubble_head = new createjs.Bitmap('assets/img/bubble/head.png');
 		bubble_body = new createjs.Bitmap('assets/img/bubble/body.png');
 		bubble_tail = new createjs.Bitmap('assets/img/bubble/tail.png');
+
+		tag_nick = new createjs.Text("Text", "13px Arial", "#FFFFFF");
+		tag_nick.text = _nickname;
+
+		tag_back =  new createjs.Shape();
+ 		tag_back.graphics.beginFill("#000000").drawRect(0, 0, tag_nick.getBounds().width + 10, tag_nick.getBounds().height + 6);
+ 		tag_back.alpha = 0.7;
 
 		x = ix;
 		y = iy;
@@ -58,6 +80,11 @@ var Character = function () {
 			bubble_body.visible = false;
 			bubble_tail.visible = false;
 		}
+
+		tag_nick.x = x - parseInt(tag_nick.getBounds().width / 2);
+		tag_nick.y = y + 5;
+		tag_back.x = tag_nick.x - 5;
+		tag_back.y = tag_nick.y - 3;
 	};
 
 	var gravity = function(igravity){
@@ -75,8 +102,8 @@ var Character = function () {
 	};
 
 	return {
-        init: function (ix, iy, isprite) {
-    		initialize(ix, iy, isprite);
+        init: function (config, ix, iy) {
+    		initialize(config, ix, iy);
         },
 
         update: function(){
@@ -104,7 +131,7 @@ var Character = function () {
 
         chat: function(content){
         	if(content !== ''){
-	    		var input = "";
+	    		var input = _nickname + " : ";
 	    		for(var i = 0; i <= parseInt(content.length / 13); i++){
 					input += content.substr(i * 13, 13) + " ";
 				}
@@ -113,6 +140,24 @@ var Character = function () {
 
 				count_chat = 90;
 	    	}
+        },
+
+        sync: function(data){
+        	x = data.x;
+        	y = data.y;
+        	nickname = data.nickname;
+        	doAction(data.action);
+        	sprite.scaleX = data.xscale;
+        	gravity_acc = data.gravity;
+        	count_chat = data.count_chat,
+			bubble_text.text = data.count_text;
+        },
+
+        isFalling: function(){
+        	if(gravity_acc >= 0){
+        		return true;
+        	}
+        	return false;
         },
 
         gravity: function(igravity){
@@ -162,9 +207,39 @@ var Character = function () {
     		objects.push({
     			type: 'text',
     			data: bubble_text
-    		})
+    		});
 
     		return objects;
+        },
+
+        getFrontObjects: function(){
+        	var objects = [];
+
+        	objects.push({
+        		type: 'graphic',
+        		data: tag_back
+        	});
+
+        	objects.push({
+    			type: 'text',
+    			data: tag_nick
+    		});
+
+    		return objects;
+        },
+
+        getSyncData: function(){
+    		return {
+    			id: _id,
+    			x: x,
+    			y: y,
+    			xscale: sprite.scaleX,
+    			nickname: _nickname,
+    			action: action,
+    			gravity: gravity_acc,
+    			count_chat: count_chat,
+    			count_text: bubble_text.text
+    		};
         }
     };
 }

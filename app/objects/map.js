@@ -4,10 +4,11 @@ var Map = function () {
 	var width = 1280;
 	var height = 720;
 
-    var gravity = 0.98;
+    var gravity = 1.3;
 
 	var background;
     var layers = [];
+    var layers_front = [];
 	var characters = [];
 	var floors = [];
 
@@ -27,6 +28,10 @@ var Map = function () {
             layer.getObject().data.x = x * ((layer.getSize().width - 1280) / (width - 1280));
         });
 
+        $.each(layers_front, function(i, layer){
+            layer.getObject().data.x = x * ((layer.getSize().width - 1280) / (width - 1280));
+        });
+
 		$.each(floors, function(i, floor){
 			floor.update();
             floor.getObject().data.x += x;
@@ -36,19 +41,26 @@ var Map = function () {
 		$.each(characters, function(i, character){
             var gravity_character = gravity;
 
-            $.each(floors, function(i, floor){
-                var hit_position = $_Extension.hitTestByFloor(floor, character.getPosition());
+            if(character.isFalling()){
+                $.each(floors, function(i, floor){
+                    var hit_position = $_Extension.hitTestByFloor(floor, character.getPosition());
 
-                if(hit_position != -1){
-                    character.setPosition(null, hit_position + 1);
-                    gravity_character = 0;
-                }
-            });
+                    if(hit_position != -1){
+                        character.setPosition(null, hit_position + 1);
+                        gravity_character = 0;
+                    }
+                });
+            }
 
             character.gravity(gravity_character);
 			character.update();
 
             $.each(character.getObjects(), function(i, object){
+                object.data.x += x;
+                object.data.y += y;
+            });
+
+            $.each(character.getFrontObjects(), function(i, object){
                 object.data.x += x;
                 object.data.y += y;
             });
@@ -83,6 +95,10 @@ var Map = function () {
 
         addLayer: function(ilayer){
             layers.push(ilayer);
+        },
+
+        addFrontLayer: function(ilayer){
+            layers_front.push(ilayer);
         },
 
         addFloor: function(ifloor){
@@ -124,6 +140,14 @@ var Map = function () {
 
             $.each(floors, function(i, floor){
                 objects.push(floor.getObject());
+            });
+
+            $.each(characters, function(i, character){
+                $.merge(objects, character.getFrontObjects());
+            });
+
+            $.each(layers_front, function(i, layer){
+                objects.push(layer.getObject());
             });
 
     		return objects;

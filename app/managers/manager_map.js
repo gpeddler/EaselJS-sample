@@ -61,7 +61,7 @@ var ManagerMap = function () {
 
             if(idx === -1){
                 var character = new Character();
-                character.init(object.id, object.x, object.y);
+                character.init(object, object.x, object.y);
 
                 addCharacter(getCurrentMapID(), character);
             }

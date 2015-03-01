@@ -1,6 +1,6 @@
 var Game = function () {
 	var stage;
-	var USER_ID = '';
+	var data_user = {};
 
 	var width = 0;
 	var height = 0;
@@ -22,13 +22,15 @@ var Game = function () {
 
 		var scene_login = new SceneLogin();
 		var scene_town = new SceneTown();
-		var scene_test = new SceneTest();
+		var scene_game = new SceneGame();
 
-		scene_login.setNext('town');
+		scene_login.setNext('game');
+		scene_town.setNext('game');
 
 		manager_scene.addScene("test", scene_test);
 		manager_scene.addScene("login", scene_login);
-		manager_scene.addScene("town", scene_town)
+		manager_scene.addScene("town", scene_town);
+		manager_scene.addScene("game", scene_game);
 
 		manager_scene.start("test");
 
@@ -72,8 +74,8 @@ var Game = function () {
     		initialize();
         },
 
-        setUserID: function(id){
-        	USER_ID = id;
+        setUser: function(config){
+        	data_user = config
         },
 
         setSocket: function(connect){
@@ -84,8 +86,8 @@ var Game = function () {
     		return socket;
         },
 
-        getUserID: function(){
-        	return USER_ID;
+        getUser: function(){
+        	return data_user;
         }
     };
 }();
