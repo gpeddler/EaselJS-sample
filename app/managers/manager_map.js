@@ -140,6 +140,15 @@ var ManagerMap = function () {
         });
     };
 
+    var addNpc = function(map_name, npc){
+        $.each(maps, function(i, object){
+            if(object.id === map_name){
+                object.map.addNpc(npc);
+                return;
+            }
+        });
+    };
+
     var getCurrentMap = function(){
         return maps[index].map;
     };
@@ -184,6 +193,10 @@ var ManagerMap = function () {
 
         addCharacter: function(map_name, character){
             addCharacter(map_name, character);
+        },
+
+        addNpc: function(map_name, npc){
+            addNpc(map_name, npc);
         },
 
         addPortalSet: function(set){

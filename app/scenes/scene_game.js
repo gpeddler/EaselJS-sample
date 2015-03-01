@@ -45,7 +45,7 @@ var SceneGame = function () {
 
 		socket.on('updategame', function(data){
 			data = $.grep(data, function(object) {
-				return object.id != character.getID();
+				return object.id != character.getSyncData().id;
 			});
 
 			manager_map.sync(data);

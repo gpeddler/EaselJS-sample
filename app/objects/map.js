@@ -11,6 +11,7 @@ var Map = function () {
     var layers_front = [];
 	var characters = [];
 	var floors = [];
+    var npcs = [];
 
 	var initialize = function(iwidth, iheight){
 		width = iwidth;
@@ -65,6 +66,14 @@ var Map = function () {
                 object.data.y += y;
             });
 		});
+
+        $.each(npcs, function(i, npc){
+            npc.update();
+            $.each(npc.getObjects(), function(i, object){
+                object.data.x += x;
+                object.data.y += y;
+            });
+        });
 	};
 
 	return {
@@ -80,7 +89,7 @@ var Map = function () {
             var result = null;
 
             $.each(characters, function(i, character){
-                if(character.getID() === id){
+                if(character.getSyncData().id === id){
                     result = character
                     return false;
                 }
@@ -91,6 +100,10 @@ var Map = function () {
 
         addCharacter: function(icharacter){
         	characters.push(icharacter);
+        },
+
+        addNpc: function(inpc){
+            npcs.push(inpc);
         },
 
         addLayer: function(ilayer){
@@ -144,6 +157,10 @@ var Map = function () {
 
             $.each(characters, function(i, character){
                 $.merge(objects, character.getFrontObjects());
+            });
+
+            $.each(npcs, function(i, npc){
+                $.merge(objects, npc.getObjects());
             });
 
             $.each(layers_front, function(i, layer){

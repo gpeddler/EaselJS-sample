@@ -1,5 +1,5 @@
 var Character = function () {
-	var sprite;
+	var sprite, cloth;
 	var bubble_head, bubble_body, bubble_tail, bubble_text;
 	var tag_nick, tag_back;
 	var action = "stay";
@@ -12,6 +12,18 @@ var Character = function () {
 			"run": [12, 22, "run", 0.5]
 		}
 	});
+
+	var cloth_index = 0;
+	var cloth_sprites = [
+		new createjs.SpriteSheet({
+			"images": ["assets/img/character_cloth1.png"],
+			"frames": {"regX": 60, "height": 140, "count": 23, "regY": 140, "width": 120},
+			"animations": {
+				"stay": [0, 11, "stay"],
+				"run": [12, 22, "run", 0.5]
+			}
+		})
+	];
 
 	var _id;
 	var _nickname;
@@ -27,6 +39,7 @@ var Character = function () {
 		_id = config.id;
 		_nickname = config.nickname;
 		sprite = new createjs.Sprite(spriteSheet, "stay");
+		cloth = new createjs.Sprite(cloth_sprites[cloth_index], "stay");
 		
 		bubble_text = new createjs.Text("Text", "13px Arial", "#333333");
 		bubble_text.lineWidth = 160;
@@ -53,6 +66,8 @@ var Character = function () {
 
 		sprite.x = x;
 		sprite.y = parseInt(y);
+		cloth.x = x;
+		cloth.y = parseInt(y);
 
 		if(count_chat > 0){
 			bubble_text.visible = true;
@@ -61,7 +76,7 @@ var Character = function () {
 			bubble_tail.visible = true;
 
 			bubble_text.x = x - parseInt(bubble_text.getBounds().width / 2);
-			bubble_text.y = y - 90 - bubble_text.getBounds().height;
+			bubble_text.y = y - 150 - bubble_text.getBounds().height;
 
 			bubble_head.x = x - 89;
 			bubble_head.y = bubble_text.y - 19;
@@ -97,7 +112,9 @@ var Character = function () {
 	var doAction = function(name){
 		if(action !== name){
 			action = name;
+			cloth.gotoAndPlay(name);
 			sprite.gotoAndPlay(name);
+			
 		}
 	};
 
@@ -116,10 +133,12 @@ var Character = function () {
     		}else if(name === "move_left"){
 				x -= speed;
 				sprite.scaleX = 1;
+				cloth.scaleX = 1;
 				doAction('run');
     		}else if(name === "move_right"){
     			x += speed;
 				sprite.scaleX = -1;
+				cloth.scaleX = -1;
 				doAction('run');
     		}else if(name === "jump"){
     			if(gravity_acc == 0){
@@ -148,6 +167,7 @@ var Character = function () {
         	nickname = data.nickname;
         	doAction(data.action);
         	sprite.scaleX = data.xscale;
+        	cloth.scaleX = data.xscale;
         	gravity_acc = data.gravity;
         	count_chat = data.count_chat,
 			bubble_text.text = data.count_text;
@@ -187,6 +207,11 @@ var Character = function () {
     		objects.push({
     			type: 'sprite',
     			data: sprite
+    		});
+
+    		objects.push({
+    			type: 'sprite',
+    			data: cloth
     		});
 
     		objects.push({

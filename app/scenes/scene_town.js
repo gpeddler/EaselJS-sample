@@ -15,16 +15,22 @@ var SceneTown = function () {
 	var hope_map_x = 0;
 	var hope_map_y = 0;
 
+	var npc_cafe = null;
+
 	var initialize = function(){
 		STATUS = "running";
 
 		character = new Character();
 		character.init(Game.getUser(), 50, 620);
 
+		npc_cafe = new Npc();
+		npc_cafe.init('assets/img/npc_cafe.png', 'room', {x: 200, y: 490, width: 148, height: 164});
+
 		manager_map = new ManagerMap();
 		manager_map.init();
 		manager_map.addMap('town', new MAP_TOWN());
 		manager_map.addCharacter('town', character);
+		manager_map.addNpc('town', npc_cafe);
 
 		manager_map.start('town');
 
@@ -32,8 +38,7 @@ var SceneTown = function () {
 		camera.init(character);
 
 		chat = new Chat();
-		chat.init();
-		
+		chat.init();		
 	};
 
 	var initializeSocket = function(){
@@ -45,7 +50,7 @@ var SceneTown = function () {
 
 		socket.on('updategame', function(data){
 			data = $.grep(data, function(object) {
-				return object.id != character.getID();
+				return object.id != character.getSyncData().id;
 			});
 
 			manager_map.sync(data);
