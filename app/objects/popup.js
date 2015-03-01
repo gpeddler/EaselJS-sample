@@ -1,5 +1,7 @@
 var Popup = function () {
-    var x, y;
+    var width, height;
+    var screen_x = 400;
+    var screen_y = 250;
     var popup_top, popup_middle, popup_bottom, popup_text;
     var active = false;
     var inputText   = null;
@@ -9,8 +11,8 @@ var Popup = function () {
     var inputTexts  = [];
     var buttons     = [];
   
-    var initialize = function(ix, iy){
-        popup_text = new createjs.Text(" ", "12px Arial", "#333333");
+    var initialize = function(iwidth, iheight){
+        popup_text = new createjs.Text(" ", "15px Arial", "#333333");
         popup_text.lineWidth = 160;
         popup_text.lineHeight = 15;
         popup_text.maxWidth = 160;
@@ -19,11 +21,11 @@ var Popup = function () {
         popup_middle = new createjs.Bitmap('assets/img/popup/popup_middle.png');
         popup_bottom = new createjs.Bitmap('assets/img/popup/popup_bottom.png');
 
-//        btn_close = new Button();
- //       btn_close.init('assets/img/close.png', toggleActive, { x : ix + 200, y : iy, width : 30, height : 30 });
+//      btn_close = new Button();
+ //     btn_close.init('assets/img/close.png', toggleActive, { x : ix + 200, y : iy, width : 30, height : 30 });
 
-        x = ix;
-        y = iy;    
+        width = iwidth;
+        height = iheight;    
     };
 
     var addInputText = function(iinputText){
@@ -51,15 +53,16 @@ var Popup = function () {
            // btn_close.setVisible(true);
             //btn_close.update();
 
-            popup_top.x = x;
-            popup_top.y = y;
+            popup_top.x = screen_x;
+            popup_top.y = screen_y;
 
-            popup_middle.x = x;
-            popup_middle.y = y + 33;
-            popup_middle.scaleY = 3;
-
-            popup_bottom.x = x;
-            popup_bottom.y = y + 132;
+            var scaleCount = height/33 - 2;
+            popup_middle.x = screen_x;
+            popup_middle.y = screen_y + 33;
+            popup_middle.scaleY = scaleCount;
+            
+            popup_bottom.x = screen_x;
+            popup_bottom.y = screen_y + 33 * ( scaleCount + 1);
 
             $.each(bitmaps, function(i, bitmap){
                 bitmap.visible = true;
@@ -96,8 +99,8 @@ var Popup = function () {
     };
 
     return {
-        init: function (ix, iy){
-            initialize(ix, iy);
+        init: function (iwidth, iheight){
+            initialize(iwidth, iheight);
         },
 
         update: function() {
@@ -120,24 +123,24 @@ var Popup = function () {
             if(itext.text !== ""){
                 var inputText = itext.text;
                 var input = "";
-                for(var i = 0; i <= parseInt(inputText.length / 33); i++){
-                    input += inputText.substr(i * 33, 33) + " ";
+                for(var i = 0; i <= parseInt(inputText.length / 45); i++){
+                    input += inputText.substr(i * 45, 45) + " ";
                 }
 
                 popup_text.text = input;
-                popup_text.x    = x + itext.x;
-                popup_text.y    = y + itext.y;
+                popup_text.x    = screen_x + itext.x;
+                popup_text.y    = screen_y + itext.y;
             }
         },
 
         addBitmap: function(ibitmap){
-            ibitmap.x       += x;
-            ibitmap.y       += y;
+            ibitmap.x       += screen_x;
+            ibitmap.y       += screen_y;
             bitmaps.push(ibitmap);
         },
 
         addButton: function(ibutton){
-            ibutton.setPosition(x + ibutton.getPosition().x, y + ibutton.getPosition().y);
+            ibutton.setPosition(screen_x + ibutton.getPosition().x, screen_y + ibutton.getPosition().y);
             buttons.push(ibutton);
         },
 
@@ -148,8 +151,8 @@ var Popup = function () {
 
         getSize: function(){
             return {
-                width: 500,
-                height: popup_bottom.y - popup_top.y
+                width: width,
+                height: height
             }
         },
 
