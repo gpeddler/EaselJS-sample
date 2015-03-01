@@ -70,8 +70,10 @@ var Map = function () {
         $.each(npcs, function(i, npc){
             npc.update();
             $.each(npc.getObjects(), function(i, object){
-                object.data.x += x;
-                object.data.y += y;
+                if(object.type === 'npc'){
+                    object.data.x += x;
+                    object.data.y += y;
+                }
             });
         });
 	};

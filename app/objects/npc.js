@@ -1,3 +1,5 @@
+// TODO : 클릭했을때 NPC가 행동을 취하는 액션을 사용자가 정의 (객체 안에서 정의 ㄴㄴ)
+
 var Npc = function () {
     var npc_obj = null;
     var npc_bit = null;
@@ -10,6 +12,8 @@ var Npc = function () {
     var action = null;
     var popup_room, popup_2;
 
+    var callback = null;
+
     var initialize = function(url, type, bounds){
         npc_obj = new createjs.Bitmap(url);
         npc_bit = new createjs.Bitmap(url);
@@ -21,7 +25,7 @@ var Npc = function () {
         width = bounds.width;
         height = bounds.height;
 
-        popup_room.init(500, 99);
+        popup_room.init(500, 132);
         popup_2.init(500, 132);
 
         if(type === 'room'){
@@ -46,14 +50,14 @@ var Npc = function () {
         popup_room.toggleActive();
 
         var btn_room2 = new Button();
-            btn_room2.init('assets/img/btn_party_s.png', joinRoom, {x: 150, y:40, width: 170, height: 96});
+        btn_room2.init('assets/img/btn_party_s.png', callback, {x: 150, y:20, width: 170, height: 96});
 
         npc_bit.scaleX = 0.8;
         npc_bit.scaleY = 0.8;
         npc_bit.x = 10;
         npc_bit.y = 10;
 
-        popup_2.addBitmap(npc_bit);
+        popup_room.addBitmap(npc_bit);
         popup_room.addButton(btn_room2);
     };
 
@@ -98,6 +102,10 @@ var Npc = function () {
             update();
         },
 
+        setJoinCallback: function(icallback){
+            callback = icallback;
+        },
+
         setVisible: function(bool){
             npc_obj.visible = bool;
         },
@@ -119,7 +127,7 @@ var Npc = function () {
             var objects = [];
 
             objects.push({
-                type: 'bitmap',
+                type: 'npc',
                 data: npc_obj
             });
 
