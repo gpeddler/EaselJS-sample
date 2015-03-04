@@ -58,6 +58,11 @@ var Chat = function () {
             update();
         },
 
+        remove: function(){
+            $("#area_chat").remove();
+            $("#input_user").remove();
+        },
+
         clear: function() {
             $('#input_user').val('');
         },

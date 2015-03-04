@@ -14,8 +14,8 @@ var ManagerScene = function () {
         var current_scene = getCurrentScene();
 
         if(current_scene.getStatus() === 'finish'){
-            if(current_scene.getNext() != null){
-                start(current_scene.getNext());
+            if(current_scene.getNext() != null && current_scene.getNext().scene != null){
+                start(current_scene.getNext().scene);
             }else{
                 location.reload();
             }
@@ -39,10 +39,12 @@ var ManagerScene = function () {
     };
 
     var start = function(key){
+        var param = getCurrentScene().getNext().param;
+
         $.each(scenes, function(i, object){
             if(object.id === key){
                 index = i;
-                object.scene.init();
+                object.scene.init(param);
                 return;
             }
         });

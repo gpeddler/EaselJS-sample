@@ -1,44 +1,51 @@
 var Popup = function () {
+    var x, y;
     var width, height;
-    var screen_x = 400;
-    var screen_y = 250;
-    var popup_top, popup_middle, popup_bottom, popup_text;
+
+    var popup_title;
+    var popup_top, popup_middle, popup_bottom;
+    var btn_close;
+
     var active = false;
     var inputText   = null;
     
     var sprites     = [];
     var bitmaps     = [];
-    var inputTexts  = [];
+    var inputs      = [];
     var buttons     = [];
+    var texts       = [];
   
-    var initialize = function(iwidth, iheight){
-        popup_text = new createjs.Text(" ", "15px Arial", "#333333");
-        popup_text.lineWidth = 160;
-        popup_text.lineHeight = 15;
-        popup_text.maxWidth = 160;
+    var initialize = function(title, iheight){
+        clear();
 
-        popup_top = new createjs.Bitmap('assets/img/popup/popup_top.png');
-        popup_middle = new createjs.Bitmap('assets/img/popup/popup_middle.png');
-        popup_bottom = new createjs.Bitmap('assets/img/popup/popup_bottom.png');
+        popup_top = new createjs.Bitmap('assets/img/popup/popup_top.png'); // 50
+        popup_middle = new createjs.Bitmap('assets/img/popup/popup_middle.png'); // 24
+        popup_bottom = new createjs.Bitmap('assets/img/popup/popup_bottom.png'); // 13
 
-//      btn_close = new Button();
- //     btn_close.init('assets/img/close.png', toggleActive, { x : ix + 200, y : iy, width : 30, height : 30 });
+        popup_title = new createjs.Text("Text", "bold 20px Arial", "#333333");
 
-        width = iwidth;
-        height = iheight;    
-    };
+        popup_title.lineWidth = 460;
+        popup_title.lineHeight = 25;
+        popup_title.maxWidth = 460;
 
-    var addInputText = function(iinputText){
-        var element_input = iinputText;
-        $("body").append(element_input);
+        popup_title.text = title;
 
-        inputText = new createjs.DOMElement(element_input.attr('id'));
-        inputTexts.push(inputText);
+        height = iheight;
+
+        x = 390;
+        y = 360 - parseInt(height / 2) - 50;
+
+        btn_close = new Button();
+        btn_close.init('assets/img/popup/btn_close.png', toggleActive, { x : x + 466, y : y + 12, width : 17, height : 17 });  
+
+        popup_title.x = x + 17;
+        popup_title.y = y + 12;
     };
 
     var toggleActive = function(){
         if(active){
             active = false;
+            clear();
         }else{
             active = true;
         }
@@ -46,23 +53,31 @@ var Popup = function () {
 
     var update = function(){
         if(active){
-            popup_text.visible = true;
+            x = 390;
+            y = 360 - parseInt(height / 2) - 50;
+
+            popup_top.x = x;
+            popup_top.y = y
+
+            popup_middle.scaleY = parseFloat(height / 24);
+            popup_middle.x = x;
+            popup_middle.y = y + 50;
+            
+            popup_bottom.x = x;
+            popup_bottom.y = y + 50 + height;
+
+            btn_close.update();
+
             popup_top.visible = true;
             popup_middle.visible = true;
             popup_bottom.visible = true;
-           // btn_close.setVisible(true);
-            //btn_close.update();
+            popup_title.visible = true;
 
-            popup_top.x = screen_x;
-            popup_top.y = screen_y;
+            btn_close.setVisible(true);
 
-            var scaleCount = height/33 - 2;
-            popup_middle.x = screen_x;
-            popup_middle.y = screen_y + 33;
-            popup_middle.scaleY = scaleCount;
-            
-            popup_bottom.x = screen_x;
-            popup_bottom.y = screen_y + 33 * ( scaleCount + 1);
+            $.each(texts, function(i, text){
+                text.visible = true;
+            });
 
             $.each(bitmaps, function(i, bitmap){
                 bitmap.visible = true;
@@ -73,16 +88,21 @@ var Popup = function () {
                 button.update();
             });
 
-            $.each(inputTexts, function(i, inputText){
-                inputText.visible = true;  
+            $.each(inputs, function(i, input){
+                input.visible = true;  
             });
 
         }else{
-            popup_text.visible = false;
             popup_top.visible = false;
             popup_middle.visible = false;
             popup_bottom.visible = false; 
-          //  btn_close.visible = false; 
+            popup_title.visible = false;
+
+            btn_close.setVisible(false);
+
+            $.each(texts, function(i, text){
+                text.visible = false;
+            });
 
             $.each(bitmaps, function(i, bitmap){
                 bitmap.visible = false;             
@@ -92,15 +112,27 @@ var Popup = function () {
                 button.setVisible(false);
             });
 
-            $.each(inputTexts, function(i, inputText){
-                inputText.visible = false;  
+            $.each(inputs, function(i, input){
+                input.visible = false;  
             });
         }
     };
 
+    var clear = function(){
+        $.each(inputs, function(i, input){
+            var element = input.htmlElement;
+            element.remove();
+        });
+
+        sprites = [];
+        bitmaps = [];
+        buttons = [];
+        inputs = [];
+    };
+
     return {
-        init: function (iwidth, iheight){
-            initialize(iwidth, iheight);
+        init: function (title, iheight){
+            initialize(title, iheight);
         },
 
         update: function() {
@@ -120,33 +152,26 @@ var Popup = function () {
         },
 
         addText: function(itext){
-            if(itext.text !== ""){
-                var inputText = itext.text;
-                var input = "";
-                for(var i = 0; i <= parseInt(inputText.length / 45); i++){
-                    input += inputText.substr(i * 45, 45) + " ";
-                }
-
-                popup_text.text = input;
-                popup_text.x    = screen_x + itext.x;
-                popup_text.y    = screen_y + itext.y;
-            }
+            itext.x += x;
+            itext.y += y;
+            texts.push(itext);
         },
 
         addBitmap: function(ibitmap){
-            ibitmap.x       += screen_x;
-            ibitmap.y       += screen_y;
+            ibitmap.x       += x;
+            ibitmap.y       += y;
             bitmaps.push(ibitmap);
         },
 
         addButton: function(ibutton){
-            ibutton.setPosition(screen_x + ibutton.getPosition().x, screen_y + ibutton.getPosition().y);
+            ibutton.setPosition(x + ibutton.getPosition().x, y + ibutton.getPosition().y);
             buttons.push(ibutton);
         },
 
-        addInputText: function(iinputText){
-            addInputText(iinputText);
-            //inputTexts.push(iinputText);
+        addInput: function(iinput){
+            iinput.x += x;
+            iinput.y += y;
+            inputs.push(iinput);
         },
 
         getSize: function(){
@@ -164,15 +189,12 @@ var Popup = function () {
         },
 
         clear : function(){
-            sprites = [];
-            bitmaps = [];
-            buttons = [];
-            inputTexts = [];
+            clear();
         },
 
         getObjects: function(){
             var objects = [];
-           // objects.push(btn_close.getObject());
+
             objects.push({
                 type: 'bitmap',
                 data: popup_top
@@ -190,27 +212,39 @@ var Popup = function () {
 
             objects.push({
                 type: 'text',
-                data: popup_text
+                data: popup_title
+            })
+
+            $.each(texts, function(i, text){
+                objects.push({
+                    type: 'text',
+                    data: text
+                });
+            });
+
+            $.each(inputs, function(i, input){
+                objects.push({
+                    type: 'dom',
+                    data: input
+                });
             });
             
-            $.each(sprites, function(i, sprite){
-                objects.push(sprite);
-            });
+            // $.each(sprites, function(i, sprite){
+            //     objects.push(sprite);
+            // });
 
             $.each(buttons, function(i, button){
                 objects.push(button.getObject());
             });
 
-            $.each(inputTexts, function(i, inputText){
-                objects.push(inputText);
-            });
+            // $.each(bitmaps, function(i, bitmap){
+            //     objects.push({
+            //         type: 'bitmap',
+            //         data: bitmap
+            //     });
+            // });
 
-            $.each(bitmaps, function(i, bitmap){
-                objects.push({
-                    type: 'bitmap',
-                    data: bitmap
-                });
-            });
+            objects.push(btn_close.getObject());
 
             return objects;
         }

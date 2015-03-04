@@ -5,16 +5,40 @@ var ManagerParty = function () {
 		parties = [];
 	};
 
-    var addParty = function(party){
-        parties.push(party);
+    var createParty = function(ititle, idesc, master){
+        if(getMyParty(master) === null){
+            var party = new Party();
+            party.init(ititle, idesc, master);
+
+            parties.push(party);
+            return true;
+        }else{
+            return false;
+        }
+        
     };
+
+    var breakMyParty = function(id){
+        key = -1;
+
+        $.each(parties, function(i, party){
+            if(party.isMember(id)){
+                key = i;
+                return false;
+            }
+        });
+
+        if(key !== -1){
+            parties.splice(key, 1);
+        }
+    }
 
     var getMyParty = function(id){
         result = null;
 
         $.each(parties, function(i, party){
             if(party.isMember(id)){
-                result = party.getMembers();
+                result = party;
                 return false;
             }
         });
@@ -27,8 +51,12 @@ var ManagerParty = function () {
     		initialize();
         },
 
-        addParty: function(party){
-            addParty(party);
+        createParty: function(ititle, idesc, master){
+            return createParty(ititle, idesc, master);
+        },
+
+        breakMyParty: function(id){
+            breakMyParty(id);
         },
 
         getMyParty: function(id){

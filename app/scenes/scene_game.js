@@ -2,6 +2,7 @@ var SceneGame = function () {
 	var STATUS = "empty";
 	var NEXT = null;
 
+	var manager_party;
 	var manager_map;
 	var character;
 	var camera;
@@ -10,30 +11,90 @@ var SceneGame = function () {
 	var portal_set;
 
 	var socket;
+	var ui_btns = [];
 
 	// cameara moving
 	var hope_map_x = 0;
 	var hope_map_y = 0;
 
-	var initialize = function(){
+	var popup = null;
+
+	var initialize = function(param){
 		STATUS = "running";
+
+		console.log(param);
 
 		character = new Character();
 		character.init(Game.getUser(), 50, 620);
 
+		manager_party = new ManagerParty();
+		manager_party.init();
+
 		manager_map = new ManagerMap();
 		manager_map.init();
 		manager_map.addMap('cafe_1', new MAP_CAFE());
+		manager_map.addMap('dot_1', new MAP_DOT());
 
-		manager_map.addCharacter('cafe_1', character);
+		manager_map.addCharacter(param.map, character);
 
-		manager_map.start('first');
+		manager_map.start(param.map);
 
 		camera = new Camera();
 		camera.init(character);
 
 		chat = new Chat();
 		chat.init();
+
+		initializeUI();
+	};
+
+	var initializeUI = function(){
+		var ui_btn_info = new Button();	
+		var action_info = function(){
+			alert('준비중입니다.');
+		};
+		ui_btn_info.init('assets/img/btn_ui_info.png', action_info, {x: 876, y: 617, width: 100, height: 100});
+
+		var ui_btn_project = new Button();	
+		var action_project = function(){
+			alert('준비중입니다.');
+		};
+		ui_btn_project.init('assets/img/btn_ui_project.png', action_project, {x: 976, y: 617, width: 100, height: 100});
+
+		var ui_btn_party = new Button();	
+		var action_party = function(){
+			popup = new POPUP_PARTY_CREATE(
+				function(){
+					console.log('파티생성');
+					popup.toggleActive();
+				},
+				function(){
+					popup.toggleActive();
+				}
+			);
+			popup.toggleActive();
+			// var result = manager_party.createParty();
+			// if(result){
+				
+			// }else{
+				
+			// }
+		};
+		ui_btn_party.init('assets/img/btn_ui_party.png', action_party, {x: 1076, y: 617, width: 100, height: 100});
+
+		var ui_btn_out = new Button();	
+		var action_out = function(){
+			NEXT = {scene: 'town', param: null};
+			finish();
+		};
+		ui_btn_out.init('assets/img/btn_ui_out.png', action_out, {x: 1176, y: 617, width: 100, height: 100});
+
+		ui_btns = [
+			ui_btn_info,
+			ui_btn_project,
+			ui_btn_party,
+			ui_btn_out
+		];
 	};
 
 	var initializeSocket = function(){
@@ -48,7 +109,7 @@ var SceneGame = function () {
 				return object.id != character.getSyncData().id;
 			});
 
-			manager_map.sync(data);
+			manager_map.sync(data, character);
 		});
 	};
 
@@ -57,6 +118,14 @@ var SceneGame = function () {
 
 		manager_map.update(character);
 		chat.update();
+
+		if(popup !== null){
+			popup.update();
+		}
+		
+		$.each(ui_btns, function(i, object){
+    		object.update();
+    	});
 
 		updateCharacterControl();
 		updateCamera();
@@ -135,12 +204,17 @@ var SceneGame = function () {
 	};
 
 	var finish = function(){
+		socket.removeAllListeners('updatechat');
+		socket.removeAllListeners('updategame');
+
+		chat.remove();
+
         STATUS = 'finish';
     };
 
     return {
-        init: function () {
-        	initialize();
+        init: function (param) {
+        	initialize(param);
         	initializeSocket();
         },
 
@@ -166,6 +240,14 @@ var SceneGame = function () {
 
         	$.merge(objects, manager_map.getObjects());
         	$.merge(objects, chat.getObjects());
+
+        	$.each(ui_btns, function(i, object){
+        		objects.push(object.getObject());
+        	});
+
+        	if(popup !== null){
+	        	$.merge(objects, popup.getObjects());
+	        }
 
         	return objects;
         },

@@ -87,6 +87,10 @@ var Map = function () {
         	update();
         },
 
+        getCharacters: function(){
+            return characters;
+        },
+
         findCharacter: function(id){
             var result = null;
 

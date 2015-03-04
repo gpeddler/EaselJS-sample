@@ -11,7 +11,8 @@ var Game = function () {
 
 	var socket = null;
 	// var host = 'http://growingdever.cafe24.com:3000';
-	var host = 'http://192.168.0.53:3000'
+	// var host = 'http://192.168.0.53:3000'
+	var host = 'http://localhost:3000';
 
 	var initialize = function(){		
 		stage = new createjs.Stage("screen");
@@ -24,8 +25,8 @@ var Game = function () {
 		var scene_town = new SceneTown();
 		var scene_game = new SceneGame();
 
-		scene_login.setNext('town');
-		scene_town.setNext('game');
+		scene_login.setNext({scene: 'town', param: null});
+		scene_town.setNext({scene: 'game', param: null});
 
 		manager_scene.addScene("login", scene_login);
 		manager_scene.addScene("town", scene_town);

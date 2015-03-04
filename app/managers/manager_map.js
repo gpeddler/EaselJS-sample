@@ -54,37 +54,56 @@ var ManagerMap = function () {
         index = 0;
     };
 
-    var syncData = function(data){
-        // add new character
-        $.each(data, function(i, object){
-            var idx = getIndex(data_sync, object.id);
+    var sync = function(data, ignore_character){
+        var list = [];
 
-            if(idx === -1){
+        $.each(maps, function(i, map){
+            $.each(map.map.getCharacters(), function(k, character){
+                if(ignore_character.getSyncData().id === character.getSyncData().id){
+                    return true;
+                }
+                list.push({
+                    state: 'wait',
+                    map: map.id,
+                    character: character
+                });
+            });
+        });
+
+        $.each(data, function(i, row){
+            var target = find(list, row.id);
+            if(target === null){
                 var character = new Character();
-                character.init(object, object.x, object.y);
+                character.init({ id: row.id, nickname: row.nickname }, row.x, row.y);
+                character.sync(row);
 
-                addCharacter(getCurrentMapID(), character);
+                addCharacter(row.map, character);
+            }else{
+                if(target.map === row.map){
+                    var character = findCharacter(target.map, target.character.getSyncData().id);
+                    character.sync(row);
+                }else{
+                    var character = target.character;
+                    getMap(row.map).map.removeCharacter(character);
+                    addCharacter(row.map, character);
+                }
+                target.state = 'sync';
             }
         });
 
-        // remove exist character
-        $.each(data_sync, function(i, object){
-            var idx = getIndex(data_sync, object.id);
-
-            if(idx === -1){
-                var character = findCharacter(getCurrentMapID(), object.id);
-                getCurrentMap().removeCharacter(character);
+        $.each(list, function(i, row){
+            if(row.state === 'wait'){
+                getMap(row.map).map.removeCharacter(row.character);
             }
         });
 
-        data_sync = data;
+        function find(list, id){
+            var result = null;
 
-        function getIndex(objects, id){
-            result = -1;
-
-            $.each(objects, function(i, object){
-                if(object.id === id){
-                    result = i;
+            $.each(list, function(i, row){
+                if(row.character.getSyncData().id === id){
+                    result = row;
+                    return false;
                 }
             });
 
@@ -92,12 +111,11 @@ var ManagerMap = function () {
         }
     };
 
-    var syncUpdate = function(){
-        $.each(data_sync, function(i, object){
-            var character = findCharacter(getCurrentMapID(), object.id);
-            if(character != null){
-                character.sync(object);
-                character.update();
+    var syncCharacter = function(map_name, data){
+        $.each(maps, function(i, map){
+            if(map.id === map_name){
+                map.map.syncCharacter(data.id, data);
+                return false;
             }
         });
     };
@@ -149,6 +167,19 @@ var ManagerMap = function () {
         });
     };
 
+    var getMap = function(id){
+        var result = null;
+
+        $.each(maps, function(i, map){
+            if(map.id === id){
+                result = map;
+                return false;
+            }
+        });
+
+        return result;
+    };
+
     var getCurrentMap = function(){
         return maps[index].map;
     };
@@ -175,9 +206,8 @@ var ManagerMap = function () {
         	clear();
         },
 
-        sync: function(data){
-            syncData(data);
-            syncUpdate();
+        sync: function(data, ignore_character){
+            sync(data, ignore_character);
         },
 
         findCharacter: function(map_name, id){
